@@ -8,19 +8,35 @@ use structopt::StructOpt;
 mod version;
 
 #[derive(Debug, StructOpt)]
-#[structopt(name = "example", about = "An example of StructOpt usage.")]
+#[structopt(
+    name = "vers",
+    about = "vers is a CLI app for updating your app's version and creating changelog file."
+)]
 struct Opt {
-    /// Activate debug mode
-    #[structopt(short = "d", long = "debug")]
-    debug: bool,
-    /// Set speed
-    #[structopt(short = "s", long = "speed", default_value = "42")]
-    speed: f64,
+    /// Update patch version
+    #[structopt(short = "p", long = "patch")]
+    patch: bool,
+    /// Update minor version
+    #[structopt(short = "m", long = "minor")]
+    minor: bool,
+    /// Update major version
+    #[structopt(short = "j", long = "major")]
+    major: bool,
 }
 
 fn main() {
     let opt = Opt::from_args();
-    println!("{:?}", opt);
+    // println!("{:?}", opt);
+
+    if opt.patch {
+        println!("PATCH: {}", opt.patch);
+    }
+    if opt.minor {
+        println!("MINOR: {}", opt.minor);
+    }
+    if opt.major {
+        println!("MAJOR: {}", opt.major);
+    }
 
     println!("VERSION: {}", version::get_parsed());
 }
