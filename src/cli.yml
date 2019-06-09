@@ -1,0 +1,20 @@
+name: vers
+version: "0.1.0"
+author: ink8bit
+about: vers is a CLI app for updating your JS app version and creating changelog file
+args:
+    - patch:
+        short: p
+        long: patch
+        help: Updates patch version value
+        multiple: true
+    - minor:
+        short: m
+        long: minor
+        help: Updates minor version value
+        multiple: true
+    - major:
+        short: j
+        long: major
+        help: Updates major version value
+        multiple: true
