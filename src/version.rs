@@ -8,7 +8,7 @@ struct Package {
 }
 
 #[allow(dead_code)]
-enum Version {
+pub enum VersionType {
     Major,
     Minor,
     Patch,
@@ -42,4 +42,50 @@ pub fn get_parsed() -> Result<String, io::Error> {
 
 // Updates version in package.json by a given one
 #[allow(dead_code)]
-fn update(_version: Version) {}
+fn update(_version: VersionType) {}
+
+#[derive(Debug)]
+pub struct Version {
+    major: String,
+    minor: String,
+    patch: String,
+}
+
+impl Version {
+    pub fn new(major: String, minor: String, patch: String) -> Version {
+        Version {
+            major,
+            minor,
+            patch,
+        }
+    }
+
+    fn to_number(self) -> u8 {
+        let mj = self.major.into_bytes();
+        mj[0]
+    }
+
+    pub fn update(self, kind: VersionType) -> Version {
+        match kind {
+            VersionType::Major => Version::new(
+                (self.major.into_bytes()[0] + 1).to_string(),
+                self.minor,
+                self.patch,
+            ),
+            VersionType::Minor => Version::new(
+                self.major,
+                (self.minor.into_bytes()[0] + 1).to_string(),
+                self.patch,
+            ),
+            VersionType::Patch => Version::new(
+                self.major,
+                self.minor,
+                (self.patch.into_bytes()[0] + 1).to_string(),
+            ),
+        }
+    }
+
+    fn to_string() -> String {
+        "some".to_owned()
+    }
+}
