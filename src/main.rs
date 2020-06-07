@@ -15,7 +15,9 @@ fn run() {
     );
 
     let v = Version::update(version, VersionType::Major);
-    dbg!(v);
+    let version_string = Version::combine(v);
+
+    dbg!(version_string);
 }
 
 fn main() {
