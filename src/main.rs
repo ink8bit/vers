@@ -1,5 +1,5 @@
 mod version;
-use version::Version;
+use version::{Version, VersionType};
 
 fn run() {
     let ver = match version::get_parsed() {
@@ -14,7 +14,8 @@ fn run() {
         parts[2].to_owned(),
     );
 
-    dbg!(version);
+    let v = Version::update(version, VersionType::Major);
+    dbg!(v);
 }
 
 fn main() {

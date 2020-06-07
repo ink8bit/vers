@@ -40,10 +40,6 @@ pub fn get_parsed() -> Result<String, io::Error> {
     Ok(package.version)
 }
 
-// Updates version in package.json by a given one
-#[allow(dead_code)]
-fn update(_version: VersionType) {}
-
 #[derive(Debug)]
 pub struct Version {
     major: String,
@@ -60,32 +56,32 @@ impl Version {
         }
     }
 
-    fn to_number(self) -> u8 {
-        let mj = self.major.into_bytes();
-        mj[0]
+    fn to_number(version_type: String) -> u8 {
+        let number: u8 = version_type.parse().unwrap();
+        number
     }
 
     pub fn update(self, kind: VersionType) -> Version {
         match kind {
             VersionType::Major => Version::new(
-                (self.major.into_bytes()[0] + 1).to_string(),
+                (Version::to_number(self.major) + 1).to_string(),
                 self.minor,
                 self.patch,
             ),
             VersionType::Minor => Version::new(
                 self.major,
-                (self.minor.into_bytes()[0] + 1).to_string(),
+                (Version::to_number(self.minor) + 1).to_string(),
                 self.patch,
             ),
             VersionType::Patch => Version::new(
                 self.major,
                 self.minor,
-                (self.patch.into_bytes()[0] + 1).to_string(),
+                (Version::to_number(self.patch) + 1).to_string(),
             ),
         }
     }
 
-    fn to_string() -> String {
-        "some".to_owned()
+    fn combine(self, ver: Version) -> String {
+        self.major + &self.minor + &self.patch
     }
 }
