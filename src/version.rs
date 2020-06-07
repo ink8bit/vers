@@ -1,6 +1,4 @@
-use std::fs;
-use std::fs::File;
-use std::io;
+use std::{fs, io};
 
 use serde::Deserialize;
 
@@ -44,4 +42,4 @@ pub fn get_parsed() -> Result<String, io::Error> {
 
 // Updates version in package.json by a given one
 #[allow(dead_code)]
-fn update(version: Version) {}
+fn update(_version: Version) {}
