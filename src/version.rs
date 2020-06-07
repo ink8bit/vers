@@ -81,7 +81,7 @@ impl Version {
         }
     }
 
-    fn combine(self, ver: Version) -> String {
-        self.major + &self.minor + &self.patch
+    pub fn combine(ver: Version) -> String {
+        ver.major + "." + &ver.minor + "." + &ver.patch
     }
 }
