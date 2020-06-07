@@ -1,3 +1,5 @@
+use std::fs;
+
 mod version;
 use version::{Version, VersionType};
 
@@ -18,6 +20,8 @@ fn run() {
     let version_string = Version::combine(v);
 
     dbg!(version_string);
+
+    // fs::write("package.json", version_string).expect("Unable to write file");
 }
 
 fn main() {
