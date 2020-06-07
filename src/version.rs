@@ -1,3 +1,7 @@
+use std::fs;
+use std::fs::File;
+use std::io;
+
 use serde::Deserialize;
 
 #[derive(Deserialize)]
@@ -31,11 +35,11 @@ fn get_major() -> u8 {
 }
 
 // Returns parsed version from package.json
-pub fn get_parsed() -> String {
-    let f = std::fs::read_to_string("package.json").expect("no such file");
-    let package: Package = serde_json::from_str(&f).unwrap();
+pub fn get_parsed() -> Result<String, io::Error> {
+    let f = fs::read_to_string("package.json")?;
+    let package: Package = serde_json::from_str(&f)?;
 
-    package.version
+    Ok(package.version)
 }
 
 // Updates version in package.json by a given one
