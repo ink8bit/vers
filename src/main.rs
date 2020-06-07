@@ -1,8 +1,5 @@
-#[macro_use]
-extern crate serde_derive;
-
 mod version;
 
 fn main() {
-    // println!("VERSION: {}", version::get_parsed());
+    println!("VERSION: {}", version::get_parsed());
 }

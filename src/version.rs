@@ -1,4 +1,6 @@
-#[derive(Serialize, Deserialize)]
+use serde::Deserialize;
+
+#[derive(Deserialize)]
 struct Package {
     version: String,
 }
