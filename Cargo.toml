@@ -4,4 +4,6 @@ version = "0.1.0"
 authors = ["ink8bit <ink8bit@users.noreply.github.com>"]
 edition = "2018"
 
+publish = false
+
 [dependencies]
