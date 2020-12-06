@@ -27,5 +27,23 @@ pub fn args() -> ArgMatches {
         .about("vers is a CLI app which changes package version in JavaScript projects.")
         .author("ink8bit")
         .arg(Arg::from("<type> 'Version type'").possible_values(&["major", "minor", "patch"]))
+        .arg(
+            Arg::new("releaser")
+                .short('r')
+                .long("releaser")
+                .value_name("string")
+                .about("Sets releaser value.")
+                .required(true)
+                .takes_value(true),
+        )
+        .arg(
+            Arg::new("info")
+                .short('i')
+                .long("info")
+                .value_name("string")
+                .about("Sets info value.")
+                .required(true)
+                .takes_value(true),
+        )
         .get_matches()
 }
