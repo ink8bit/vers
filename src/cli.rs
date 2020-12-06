@@ -21,6 +21,13 @@ impl FromStr for Version {
     }
 }
 
+fn is_valid_releaser_name(val: &str) -> Result<(), String> {
+    if val.contains('@') {
+        return Err("you should write releaser nickname without `@` sign.".to_string());
+    }
+    Ok(())
+}
+
 pub fn args() -> ArgMatches {
     App::new("vers")
         .version("0.1.0")
@@ -34,7 +41,8 @@ pub fn args() -> ArgMatches {
                 .value_name("string")
                 .about("Sets releaser value.")
                 .required(true)
-                .takes_value(true),
+                .takes_value(true)
+                .validator(is_valid_releaser_name),
         )
         .arg(
             Arg::new("info")
