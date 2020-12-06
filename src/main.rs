@@ -1,10 +1,10 @@
-mod cli;
-use cli::Version;
-
 mod changelog;
+mod cli;
+mod git;
 mod npm;
 
 use changelog::Changelog;
+use cli::Version;
 
 fn main() {
     let args = cli::args();
@@ -22,8 +22,11 @@ fn main() {
         Err(err) => panic!("Error: {}", err),
     };
 
+    let ver = v.to_owned();
     let chlog = Changelog::new(v, i.to_string(), r.to_string());
     let c = chlog.create();
 
-    chlog.write(c).expect("Can not create changelog file")
+    chlog.write(c).expect("Can not create changelog file");
+
+    git::commit(ver).expect("Can not commit your changes");
 }
