@@ -20,6 +20,8 @@ fn main() {
     let output = Command::new("npm")
         .arg("version")
         .arg(ver_type)
+        .arg("--no-git-tag-version")
+        .arg("--no-commit-hooks")
         .output()
         .expect("failed to execute command");
 
