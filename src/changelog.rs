@@ -1,4 +1,11 @@
+use std::fs;
+use std::fs::OpenOptions;
+use std::io::{Error, Write};
+use std::path::Path;
+
 use chrono::prelude::*;
+
+const NAME: &str = "CHANGELOG.md";
 
 #[derive(Debug)]
 pub struct Changelog {
@@ -20,7 +27,7 @@ impl Changelog {
         }
     }
 
-    pub fn create(self) -> String {
+    pub fn create(&self) -> String {
         format!(
             "
 ## {version}
@@ -36,11 +43,16 @@ impl Changelog {
         )
     }
 
-    fn write() {
-        todo!();
-    }
+    pub fn write(self, data: String) -> Result<(), Error> {
+        if !Path::new(NAME).exists() {
+            println!("Created {}", NAME);
+            return fs::write(NAME, data);
+        }
 
-    fn exists() {
-        todo!();
+        let mut file = OpenOptions::new().append(true).open(NAME)?;
+        file.write_all(data.as_bytes())?;
+        println!("Successfully added new entry to {}", NAME);
+
+        Ok(())
     }
 }
