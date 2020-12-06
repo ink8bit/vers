@@ -28,5 +28,8 @@ fn main() {
 
     chlog.write(c).expect("Can not create changelog file");
 
-    git::commit(ver).expect("Can not commit your changes");
+    match git::commit(&ver) {
+        Ok(msg) => println!("{}", msg),
+        Err(err) => eprintln!("{}", err),
+    }
 }

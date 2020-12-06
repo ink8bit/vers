@@ -2,7 +2,7 @@ use std::error::Error;
 use std::process::Command;
 use std::str;
 
-pub fn commit(version: String) -> Result<String, Box<dyn Error>> {
+pub fn commit(version: &String) -> Result<String, Box<dyn Error>> {
     let ver_str = format!("Version bump: {}", version);
     let out = Command::new("git")
         .arg("commit")
