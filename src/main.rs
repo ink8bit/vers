@@ -2,7 +2,6 @@ mod cli;
 use cli::Version;
 
 mod npm;
-use npm::version;
 
 fn main() {
     let args = cli::args();
@@ -15,8 +14,10 @@ fn main() {
         Version::Patch => "patch",
     };
 
-    match version(ver_type) {
-        Ok(v) => println!("{}", v),
+    let v = match npm::version(ver_type) {
+        Ok(v) => v,
         Err(err) => panic!("Error: {}", err),
-    }
+    };
+
+    dbg!(v);
 }
