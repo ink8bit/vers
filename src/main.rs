@@ -1,8 +1,8 @@
-use std::process::Command;
-use std::str;
-
 mod cli;
 use cli::Version;
+
+mod npm;
+use npm::version;
 
 fn main() {
     let args = cli::args();
@@ -15,23 +15,8 @@ fn main() {
         Version::Patch => "patch",
     };
 
-    dbg!(ver_type);
-
-    let output = Command::new("npm")
-        .arg("version")
-        .arg(ver_type)
-        .arg("--no-git-tag-version")
-        .arg("--no-commit-hooks")
-        .output()
-        .expect("failed to execute command");
-
-    let status = output.status;
-    let stderr = str::from_utf8(&output.stderr).unwrap();
-
-    if !status.success() {
-        eprintln!("{}", stderr);
+    match version(ver_type) {
+        Ok(v) => println!("{}", v),
+        Err(err) => panic!("Error: {}", err),
     }
-
-    let stdout = str::from_utf8(&output.stdout).unwrap();
-    dbg!(stdout);
 }
