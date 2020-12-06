@@ -17,7 +17,12 @@ pub fn version(ver_type: &str) -> Result<String, Box<dyn Error>> {
 
 fn parse_std_out(out: &Vec<u8>) -> Result<String, Utf8Error> {
     let std_out = str::from_utf8(&out)?;
-    Ok(std_out.to_string())
+    let v = remove_newline(std_out);
+    Ok(v.to_string())
+}
+
+fn remove_newline(version: &str) -> String {
+    version.replace("\n", "")
 }
 
 #[cfg(test)]
@@ -49,5 +54,15 @@ mod tests {
     #[test]
     fn version_patch() {
         assert!(version("patch").is_ok());
+    }
+
+    #[test]
+    fn successfuly_remove_newline() {
+        assert_eq!(remove_newline("new_line\n"), "new_line");
+    }
+
+    #[test]
+    fn do_not_change_string_without_newline() {
+        assert_eq!(remove_newline("without_new_line"), "without_new_line");
     }
 }
