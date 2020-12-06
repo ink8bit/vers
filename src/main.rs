@@ -1,7 +1,10 @@
 mod cli;
 use cli::Version;
 
+mod changelog;
 mod npm;
+
+use changelog::Changelog;
 
 fn main() {
     let args = cli::args();
@@ -19,5 +22,7 @@ fn main() {
         Err(err) => panic!("Error: {}", err),
     };
 
-    dbg!(v);
+    let chlog = Changelog::new(v, String::from("some info"), String::from("someone"));
+    let c = chlog.create();
+    println!("{}", c);
 }
