@@ -5,10 +5,12 @@ use std::str::Utf8Error;
 
 pub fn version(ver_type: &str) -> Result<String, Box<dyn Error>> {
     let out = Command::new("npm")
-        .arg("version")
-        .arg(ver_type)
-        .arg("--no-git-tag-version")
-        .arg("--no-commit-hooks")
+        .args(&[
+            "version",
+            ver_type,
+            "--no-git-tag-version",
+            "--no-commit-hooks",
+        ])
         .output()?;
 
     let stdout = parse_std_out(&out.stdout)?;
