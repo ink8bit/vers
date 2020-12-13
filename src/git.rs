@@ -17,9 +17,13 @@ pub fn push() -> Result<String, Box<dyn Error>> {
     todo!();
 }
 
-#[allow(dead_code)]
-pub fn tag() -> Result<String, Box<dyn Error>> {
-    todo!();
+pub fn tag(v: &String) -> Result<String, Box<dyn Error>> {
+    let version = format!("Version: {}", v);
+    let out = Command::new("git")
+        .args(&["tag", "-a", v, "-m", &version])
+        .output()?;
+    let stdout = str::from_utf8(&out.stdout)?;
+    Ok(stdout.to_string())
 }
 
 pub fn user_name() -> Result<String, Box<dyn Error>> {

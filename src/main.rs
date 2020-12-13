@@ -32,4 +32,9 @@ fn main() {
         Ok(msg) => println!("{}", msg),
         Err(err) => eprintln!("{}", err),
     }
+
+    match git::tag(&ver) {
+        Ok(msg) => println!("{}", msg),
+        Err(err) => eprintln!("{}", err),
+    }
 }
