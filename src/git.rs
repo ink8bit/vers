@@ -37,3 +37,22 @@ pub fn user_name() -> Result<String, Box<dyn Error>> {
     let stdout = str::from_utf8(&out.stdout)?;
     Ok(stdout.to_string())
 }
+
+fn status() -> Result<String, Box<dyn Error>> {
+    let out = Command::new("git").args(&["status", "-s"]).output()?;
+    let stdout = str::from_utf8(&out.stdout)?;
+    Ok(stdout.to_string())
+}
+
+pub fn has_changes() -> Result<bool, Box<dyn Error>> {
+    match status() {
+        Ok(v) => {
+            if v.is_empty() {
+                Ok(true)
+            } else {
+                Ok(false)
+            }
+        }
+        Err(e) => Err(e),
+    }
+}
