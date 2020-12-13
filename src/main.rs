@@ -26,6 +26,12 @@ fn main() {
     let chlog = Changelog::new(v, info.to_string(), releaser);
     let c = chlog.create();
 
+    let changes = git::has_changes().expect("Could not execute git status");
+
+    if !changes {
+        return println!("Nothing to commit, working tree clean.");
+    }
+
     chlog.write(c).expect("Can not create changelog file");
 
     match git::commit(&ver) {
