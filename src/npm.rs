@@ -44,16 +44,19 @@ mod tests {
     }
 
     #[test]
+    #[ignore]
     fn version_major() {
         assert!(version("major").is_ok());
     }
 
     #[test]
+    #[ignore]
     fn version_minor() {
         assert!(version("minor").is_ok());
     }
 
     #[test]
+    #[ignore]
     fn version_patch() {
         assert!(version("patch").is_ok());
     }
