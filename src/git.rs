@@ -24,7 +24,7 @@ pub fn tag(v: &String) -> Result<String, std::io::Error> {
         .output();
 
     match tag_cmd {
-        Ok(_) => Ok(format!("Successfully created new tag {}", version)),
+        Ok(_) => Ok(format!("Successfully created new tag {}", v)),
         Err(e) => Err(e),
     }
 }
