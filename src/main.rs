@@ -8,8 +8,7 @@ use cli::Version;
 
 fn main() {
     let args = cli::args();
-    let r = args.value_of("releaser").unwrap();
-    let i = args.value_of("info").unwrap();
+    let info = args.value_of("info").unwrap();
     let t = args.value_of_t("type").unwrap_or_else(|e| e.exit());
     let ver_type = match t {
         Version::Major => "major",
@@ -23,7 +22,8 @@ fn main() {
     };
 
     let ver = v.to_owned();
-    let chlog = Changelog::new(v, i.to_string(), r.to_string());
+    let releaser = git::user_name().expect("Could not get git user name");
+    let chlog = Changelog::new(v, info.to_string(), releaser);
     let c = chlog.create();
 
     chlog.write(c).expect("Can not create changelog file");

@@ -21,29 +21,12 @@ impl FromStr for Version {
     }
 }
 
-fn is_valid_releaser_name(val: &str) -> Result<(), String> {
-    if val.contains('@') {
-        return Err("you should write releaser nickname without `@` sign.".to_string());
-    }
-    Ok(())
-}
-
 pub fn args() -> ArgMatches {
     App::new("vers")
         .version("0.1.0")
         .about("vers is a CLI app which changes package version in JavaScript projects.")
         .author("ink8bit")
         .arg(Arg::from("<type> 'Version type'").possible_values(&["major", "minor", "patch"]))
-        .arg(
-            Arg::new("releaser")
-                .short('r')
-                .long("releaser")
-                .value_name("string")
-                .about("Sets releaser value.")
-                .required(true)
-                .takes_value(true)
-                .validator(is_valid_releaser_name),
-        )
         .arg(
             Arg::new("info")
                 .short('i')
