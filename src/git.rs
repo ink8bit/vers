@@ -48,9 +48,9 @@ pub fn has_changes() -> Result<bool, Box<dyn Error>> {
     match status() {
         Ok(v) => {
             if v.is_empty() {
-                Ok(true)
-            } else {
                 Ok(false)
+            } else {
+                Ok(true)
             }
         }
         Err(e) => Err(e),

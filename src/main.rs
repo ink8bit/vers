@@ -27,7 +27,6 @@ fn main() {
     let c = chlog.create();
 
     let changes = git::has_changes().expect("Could not execute git status");
-
     if !changes {
         return println!("Nothing to commit, working tree clean.");
     }
