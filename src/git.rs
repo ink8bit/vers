@@ -12,9 +12,24 @@ pub fn commit(version: &String) -> Result<String, Box<dyn Error>> {
     Ok(stdout.to_string())
 }
 
-#[allow(dead_code)]
-pub fn push() -> Result<String, Box<dyn Error>> {
-    todo!();
+pub fn push(branch: String) -> Result<String, Box<dyn Error>> {
+    match remote() {
+        Ok(origin) => {
+            let out = Command::new("git")
+                .args(&["push", "--follow-tags", origin.as_str(), &branch])
+                .output()?;
+            let stdout = str::from_utf8(&out.stdout)?;
+            Ok(stdout.to_string())
+        }
+        Err(err) => Err(err),
+    }
+}
+
+fn remote() -> Result<String, Box<dyn Error>> {
+    let out = Command::new("git").arg("remote").output()?;
+    let stdout = str::from_utf8(&out.stdout)?;
+
+    Ok(stdout.to_string())
 }
 
 pub fn tag(v: &String) -> Result<String, std::io::Error> {
