@@ -2,7 +2,7 @@ use std::error::Error;
 use std::process::Command;
 use std::str;
 
-pub fn commit(version: &String) -> Result<String, Box<dyn Error>> {
+pub fn commit(version: &str) -> Result<String, Box<dyn Error>> {
     let ver_str = format!("Version bump: {}", version);
     let out = Command::new("git")
         .args(&["commit", "-n", "-a", "--cleanup=strip", "-m", &ver_str])
@@ -32,7 +32,7 @@ fn remote() -> Result<String, Box<dyn Error>> {
     Ok(stdout.to_string())
 }
 
-pub fn tag(v: &String) -> Result<String, std::io::Error> {
+pub fn tag(v: &str) -> Result<String, std::io::Error> {
     let version = format!("Version: {}", v);
     let tag_cmd = Command::new("git")
         .args(&["tag", "-a", v, "-m", &version])
