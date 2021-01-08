@@ -41,4 +41,9 @@ fn main() {
         Ok(msg) => println!("{}", msg),
         Err(err) => eprintln!("{}", err),
     }
+
+    match git::push() {
+        Ok(msg) => println!("{}", msg),
+        Err(err) => eprintln!("{}", err),
+    }
 }
