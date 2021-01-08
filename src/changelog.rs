@@ -18,10 +18,11 @@ pub struct Entry<'a> {
 }
 
 impl Changelog<'_> {
-    pub fn update(&self) -> Result<(), Box<dyn Error>> {
+    pub fn update(&self) -> Result<String, Box<dyn Error>> {
         let formatted = self.format(&self.entry);
         let _res = self.write(formatted)?;
-        Ok(())
+
+        Ok(format!("{} updated", NAME))
     }
 
     fn format(&self, e: &Entry) -> String {
@@ -46,8 +47,7 @@ impl Changelog<'_> {
         let mut file = OpenOptions::new().create(true).write(true).open(NAME)?;
         let current = fs::read_to_string(NAME)?;
         let contents = format!("{}\n{}", data, current);
-        file.write_all(contents.as_bytes())?;
-        println!("Successfully added new entry to {}", NAME);
+        file.write_all(contents.trim().as_bytes())?;
 
         Ok(())
     }
