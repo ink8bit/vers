@@ -12,22 +12,32 @@ pub fn commit(version: &str) -> Result<String, Box<dyn Error>> {
     Ok(stdout.to_string())
 }
 
-pub fn push(branch: String) -> Result<String, Box<dyn Error>> {
-    match remote() {
-        Ok(origin) => {
-            let out = Command::new("git")
-                .args(&["push", "--follow-tags", origin.as_str(), &branch])
-                .output()?;
-            let stdout = str::from_utf8(&out.stdout)?;
-            Ok(stdout.to_string())
-        }
-        Err(err) => Err(err),
-    }
+fn branch() -> Result<String, Box<dyn Error>> {
+    let out = Command::new("git")
+        .args(&["branch", "--show-current"])
+        .output()?;
+    let stdout = str::from_utf8(&out.stdout)?.trim();
+
+    Ok(stdout.to_string())
+}
+
+pub fn push() -> Result<String, Box<dyn Error>> {
+    let branch_name = branch()?;
+    let origin = remote()?;
+
+    let _out = Command::new("git")
+        .args(&["push", "--follow-tags", origin.as_str(), &branch_name])
+        .output()?;
+
+    Ok(format!(
+        "Successfully pushed changes to remote branch: '{}'",
+        branch_name
+    ))
 }
 
 fn remote() -> Result<String, Box<dyn Error>> {
     let out = Command::new("git").arg("remote").output()?;
-    let stdout = str::from_utf8(&out.stdout)?;
+    let stdout = str::from_utf8(&out.stdout)?.trim();
 
     Ok(stdout.to_string())
 }
