@@ -1,56 +1,52 @@
+use std::error::Error;
 use std::fs;
 use std::fs::OpenOptions;
-use std::io::{Error, Write};
-use std::path::Path;
+use std::io::Write;
 
 use chrono::prelude::*;
 
 const NAME: &str = "CHANGELOG.md";
 
-#[derive(Debug)]
-pub struct Changelog {
-    date: String,
-    version: String,
-    info: String,
-    releaser: String,
+pub struct Changelog<'a> {
+    pub entry: Entry<'a>,
 }
 
-impl Changelog {
-    pub fn new(version: &str, info: String, releaser: String) -> Self {
-        let dt = Local::now();
-        let date = dt.to_rfc2822();
-        Self {
-            date,
-            version: version.to_string(),
-            info,
-            releaser,
-        }
+pub struct Entry<'a> {
+    pub version: &'a str,
+    pub changes: String,
+    pub releaser: String,
+}
+
+impl Changelog<'_> {
+    pub fn update(&self) -> Result<(), Box<dyn Error>> {
+        let formatted = self.format(&self.entry);
+        let _res = self.write(formatted)?;
+        Ok(())
     }
 
-    pub fn create(&self) -> String {
+    fn format(&self, e: &Entry) -> String {
+        let dt = Local::now();
+        let date = dt.to_rfc2822();
         format!(
             "
 ## {version}
 
 - **Date:** `{date}`
 - **Releaser:** @{releaser}
-- **Info:** {info}
+- **Changes:** {changes}
 ",
-            version = self.version,
-            date = self.date,
-            info = self.info,
-            releaser = self.releaser,
+            version = e.version,
+            changes = e.changes,
+            date = date,
+            releaser = e.releaser,
         )
     }
 
-    pub fn write(self, data: String) -> Result<(), Error> {
-        if !Path::new(NAME).exists() {
-            println!("Created {}", NAME);
-            return fs::write(NAME, data);
-        }
-
-        let mut file = OpenOptions::new().append(true).open(NAME)?;
-        file.write_all(data.as_bytes())?;
+    fn write(&self, data: String) -> Result<(), Box<dyn Error>> {
+        let mut file = OpenOptions::new().create(true).write(true).open(NAME)?;
+        let current = fs::read_to_string(NAME)?;
+        let contents = format!("{}\n{}", data, current);
+        file.write_all(contents.as_bytes())?;
         println!("Successfully added new entry to {}", NAME);
 
         Ok(())
