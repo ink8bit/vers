@@ -10,11 +10,11 @@
 **/*.rs.bk
 
 # User files
-package.json
-package-lock.json
-
 .DS_Store
 .vscode
 .idea
 
-CHANGELOG.md
+# Test files
+# CHANGELOG.md
+# package.json
+# package-lock.json
