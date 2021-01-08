@@ -2,14 +2,16 @@ use std::error::Error;
 use std::process::Command;
 use std::str;
 
-pub fn commit(version: &str) -> Result<String, Box<dyn Error>> {
+pub fn commit(version: &str) -> Result<&str, std::io::Error> {
     let ver_str = format!("Version bump: {}", version);
     let out = Command::new("git")
         .args(&["commit", "-n", "-a", "--cleanup=strip", "-m", &ver_str])
-        .output()?;
+        .output();
 
-    let stdout = str::from_utf8(&out.stdout)?;
-    Ok(stdout.to_string())
+    match out {
+        Ok(_) => Ok("Successfully commited changes"),
+        Err(e) => Err(e),
+    }
 }
 
 fn branch() -> Result<String, Box<dyn Error>> {

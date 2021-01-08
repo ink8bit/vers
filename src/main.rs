@@ -35,7 +35,7 @@ fn main() {
     };
     let log = Changelog { entry: e };
     match log.update() {
-        Ok(_) => println!("Changelog updated"),
+        Ok(v) => println!("{}", v),
         Err(e) => eprintln!("{}", e),
     }
 
