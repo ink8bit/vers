@@ -16,12 +16,12 @@ pub struct Changelog {
 }
 
 impl Changelog {
-    pub fn new(version: String, info: String, releaser: String) -> Self {
+    pub fn new(version: &str, info: String, releaser: String) -> Self {
         let dt = Local::now();
         let date = dt.to_rfc2822();
         Self {
             date,
-            version,
+            version: version.to_string(),
             info,
             releaser,
         }

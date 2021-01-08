@@ -21,9 +21,8 @@ fn main() {
         Err(err) => panic!("Error: {}", err),
     };
 
-    let ver = v.to_owned();
     let releaser = git::user_name().expect("Could not get git user name");
-    let chlog = Changelog::new(v, info.to_string(), releaser);
+    let chlog = Changelog::new(&v, info.to_string(), releaser);
     let c = chlog.create();
 
     let changes = git::has_changes().expect("Could not execute git status");
@@ -33,12 +32,12 @@ fn main() {
 
     chlog.write(c).expect("Can not create changelog file");
 
-    match git::commit(&ver) {
+    match git::commit(&v) {
         Ok(msg) => println!("{}", msg),
         Err(err) => eprintln!("{}", err),
     }
 
-    match git::tag(&ver) {
+    match git::tag(&v) {
         Ok(msg) => println!("{}", msg),
         Err(err) => eprintln!("{}", err),
     }
