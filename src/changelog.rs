@@ -32,9 +32,11 @@ impl Changelog<'_> {
             "
 ## {version}
 
-- **Date:** `{date}`
-- **Releaser:** @{releaser}
-- **Changes:** {changes}
+### {date}
+
+**Releaser:** @{releaser}
+
+**Changes:** {changes}
 ",
             version = e.version,
             changes = e.changes,

@@ -32,7 +32,7 @@ pub fn push() -> Result<String, Box<dyn Error>> {
         .output()?;
 
     Ok(format!(
-        "Successfully pushed changes to remote branch: '{}'",
+        "Successfully pushed changes to remote branch '{}'",
         branch_name
     ))
 }
