@@ -5,6 +5,7 @@ authors = ["ink8bit <ink8bit@users.noreply.github.com>"]
 edition = "2018"
 
 publish = false
+description = "CLI utility to change package version in JavaScript projects"
 
 [dependencies]
 clap = "3.0.0-beta.2"
