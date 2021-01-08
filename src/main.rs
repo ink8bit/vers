@@ -3,7 +3,7 @@ mod cli;
 mod git;
 mod npm;
 
-use changelog::Changelog;
+use changelog::{Changelog, Entry};
 use cli::Version;
 
 fn main() {
@@ -22,15 +22,22 @@ fn main() {
     };
 
     let releaser = git::user_name().expect("Could not get git user name");
-    let chlog = Changelog::new(&v, info.to_string(), releaser);
-    let c = chlog.create();
 
     let changes = git::has_changes().expect("Could not execute git status");
     if !changes {
         return println!("Nothing to commit, working tree clean.");
     }
 
-    chlog.write(c).expect("Can not create changelog file");
+    let e = Entry {
+        version: &v,
+        changes: info.to_string(),
+        releaser,
+    };
+    let log = Changelog { entry: e };
+    match log.update() {
+        Ok(_) => println!("Changelog updated"),
+        Err(e) => eprintln!("{}", e),
+    }
 
     match git::commit(&v) {
         Ok(msg) => println!("{}", msg),
