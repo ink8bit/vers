@@ -9,7 +9,7 @@ pub fn commit(version: &str) -> Result<&str, std::io::Error> {
         .output();
 
     match out {
-        Ok(_) => Ok("Successfully commited changes"),
+        Ok(_) => Ok("Successfully committed changes"),
         Err(e) => Err(e),
     }
 }
