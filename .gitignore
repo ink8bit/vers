@@ -15,6 +15,6 @@
 .idea
 
 # Test files
-# CHANGELOG.md
-# package.json
-# package-lock.json
+CHANGELOG.md
+package.json
+package-lock.json
