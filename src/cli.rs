@@ -21,7 +21,7 @@ impl FromStr for Version {
     }
 }
 
-pub fn args() -> ArgMatches {
+pub(crate) fn args() -> ArgMatches {
     App::new("vers")
         .version(crate_version!())
         .about(crate_description!())
