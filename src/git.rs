@@ -2,7 +2,7 @@ use std::error::Error;
 use std::process::Command;
 use std::str;
 
-pub fn commit(version: &str) -> Result<&str, std::io::Error> {
+pub(crate) fn commit(version: &str) -> Result<&str, std::io::Error> {
     let ver_str = format!("Version bump: {}", version);
     let out = Command::new("git")
         .args(&["commit", "-n", "-a", "--cleanup=strip", "-m", &ver_str])
@@ -23,7 +23,7 @@ fn branch() -> Result<String, Box<dyn Error>> {
     Ok(stdout.to_string())
 }
 
-pub fn push() -> Result<String, Box<dyn Error>> {
+pub(crate) fn push() -> Result<String, Box<dyn Error>> {
     let branch_name = branch()?;
     let origin = remote()?;
 
@@ -44,7 +44,7 @@ fn remote() -> Result<String, Box<dyn Error>> {
     Ok(stdout.to_string())
 }
 
-pub fn tag(v: &str) -> Result<String, std::io::Error> {
+pub(crate) fn tag(v: &str) -> Result<String, std::io::Error> {
     let version = format!("Version: {}", v);
     let tag_cmd = Command::new("git")
         .args(&["tag", "-a", v, "-m", &version])
@@ -56,7 +56,7 @@ pub fn tag(v: &str) -> Result<String, std::io::Error> {
     }
 }
 
-pub fn user_name() -> Result<String, Box<dyn Error>> {
+pub(crate) fn user_name() -> Result<String, Box<dyn Error>> {
     let out = Command::new("git")
         .args(&["config", "user.name"])
         .output()?;
@@ -71,7 +71,7 @@ fn status() -> Result<String, Box<dyn Error>> {
     Ok(stdout.to_string())
 }
 
-pub fn has_changes() -> Result<bool, Box<dyn Error>> {
+pub(crate) fn has_changes() -> Result<bool, Box<dyn Error>> {
     match status() {
         Ok(v) => {
             if v.is_empty() {

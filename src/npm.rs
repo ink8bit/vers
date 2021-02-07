@@ -2,7 +2,7 @@ use std::error::Error;
 use std::process::Command;
 use std::str;
 
-pub fn version(ver_type: &str) -> Result<String, Box<dyn Error>> {
+pub(crate) fn version(ver_type: &str) -> Result<String, Box<dyn Error>> {
     let out = Command::new("npm")
         .args(&[
             "version",
