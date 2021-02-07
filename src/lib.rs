@@ -39,18 +39,18 @@ pub fn update() {
         Err(e) => eprintln!("{}", e),
     }
 
-    // match git::commit(&v) {
-    //     Ok(msg) => println!("{}", msg),
-    //     Err(err) => eprintln!("{}", err),
-    // }
+    match git::commit(&v) {
+        Ok(msg) => println!("{}", msg),
+        Err(err) => eprintln!("{}", err),
+    }
 
-    // match git::tag(&v) {
-    //     Ok(msg) => println!("{}", msg),
-    //     Err(err) => eprintln!("{}", err),
-    // }
+    match git::tag(&v) {
+        Ok(msg) => println!("{}", msg),
+        Err(err) => eprintln!("{}", err),
+    }
 
-    // match git::push() {
-    //     Ok(msg) => println!("{}", msg),
-    //     Err(err) => eprintln!("{}", err),
-    // }
+    match git::push() {
+        Ok(msg) => println!("{}", msg),
+        Err(err) => eprintln!("{}", err),
+    }
 }
