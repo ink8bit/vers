@@ -7,18 +7,18 @@ use chrono::prelude::*;
 
 const NAME: &str = "CHANGELOG.md";
 
-pub struct Changelog<'a> {
+pub(crate) struct Changelog<'a> {
     pub entry: Entry<'a>,
 }
 
-pub struct Entry<'a> {
+pub(crate) struct Entry<'a> {
     pub version: &'a str,
     pub changes: String,
     pub releaser: String,
 }
 
 impl Changelog<'_> {
-    pub fn update(&self) -> Result<String, Box<dyn Error>> {
+    pub(crate) fn update(&self) -> Result<String, Box<dyn Error>> {
         let formatted = self.format(&self.entry);
         let _res = self.write(formatted)?;
 
