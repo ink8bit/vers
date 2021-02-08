@@ -6,11 +6,8 @@ mod npm;
 use changelog::{Changelog, Entry};
 use cli::Version;
 
-pub fn update() {
-    let args = cli::args();
-    let info = args.value_of("info").unwrap();
-    let t = args.value_of_t("type").unwrap_or_else(|e| e.exit());
-    let ver_type = match t {
+pub fn update(version: Version, info: &str) {
+    let ver_type = match version {
         Version::Major => "major",
         Version::Minor => "minor",
         Version::Patch => "patch",
