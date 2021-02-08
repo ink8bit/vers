@@ -5,7 +5,6 @@ mod npm;
 
 use changelog::{Changelog, Entry};
 use cli::Version;
-use git::log;
 
 pub fn update(version: Version, info: &str) {
     let ver_type = match version {
