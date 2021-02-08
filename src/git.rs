@@ -83,3 +83,17 @@ pub(crate) fn has_changes() -> Result<bool, Box<dyn Error>> {
         Err(e) => Err(e),
     }
 }
+
+pub(crate) fn log() -> Result<String, Box<dyn Error>> {
+    let out = Command::new("git")
+        .args(&[
+            "log",
+            "--pretty=format:%h | @%an: %s",
+            "--no-merges",
+            "master...HEAD",
+        ])
+        .output()?;
+
+    let stdout = str::from_utf8(&out.stdout)?.trim();
+    Ok(stdout.to_string())
+}
