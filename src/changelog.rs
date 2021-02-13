@@ -5,7 +5,7 @@ use std::io::Write;
 
 use chrono::prelude::*;
 
-const NAME: &str = "CHANGELOG.md";
+const CHANGELOG_FILE_NAME: &str = "CHANGELOG.md";
 
 pub(crate) struct Changelog<'a> {
     pub entry: Entry<'a>,
@@ -23,7 +23,7 @@ impl Changelog<'_> {
         let formatted = self.format(&self.entry);
         let _res = self.write(formatted)?;
 
-        Ok(format!("{} updated", NAME))
+        Ok(format!("{} updated", CHANGELOG_FILE_NAME))
     }
 
     fn format(&self, e: &Entry) -> String {
@@ -52,8 +52,11 @@ impl Changelog<'_> {
     }
 
     fn write(&self, data: String) -> Result<(), Box<dyn Error>> {
-        let mut file = OpenOptions::new().create(true).write(true).open(NAME)?;
-        let current = fs::read_to_string(NAME)?;
+        let mut file = OpenOptions::new()
+            .create(true)
+            .write(true)
+            .open(CHANGELOG_FILE_NAME)?;
+        let current = fs::read_to_string(CHANGELOG_FILE_NAME)?;
         let contents = format!("{}\n{}", data, current);
         file.write_all(contents.trim().as_bytes())?;
 
