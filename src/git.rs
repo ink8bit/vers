@@ -91,6 +91,7 @@ pub(crate) fn log() -> Result<String, Box<dyn Error>> {
             "--pretty=format:%h | @%an: %s",
             "--no-merges",
             "master...HEAD",
+            "--reverse",
         ])
         .output()?;
 
