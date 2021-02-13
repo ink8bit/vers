@@ -1,10 +1,10 @@
 mod changelog;
-mod cli;
 mod git;
 mod npm;
+mod version;
 
 use changelog::{Changelog, Entry};
-use cli::Version;
+use version::Version;
 
 pub fn update(version: Version, info: &str) {
     let ver_type = match version {
