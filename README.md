@@ -1,5 +1,7 @@
 # vers
 
+![Rust](https://github.com/ink8bit/vers/workflows/Rust/badge.svg)
+
 `vers` updates version in JavaScript projects.
 
 In general, `vers` does the following:
