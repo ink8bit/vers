@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use clap::{crate_authors, crate_description, crate_version, App, Arg, ArgMatches};
+use clap::{crate_authors, crate_description, crate_name, crate_version, App, Arg, ArgMatches};
 
 pub enum Version {
     Major,
@@ -22,7 +22,7 @@ impl FromStr for Version {
 }
 
 pub(crate) fn args() -> ArgMatches {
-    App::new("vers")
+    App::new(crate_name!())
         .version(crate_version!())
         .about(crate_description!())
         .author(crate_authors!())
