@@ -42,7 +42,7 @@ vers::update(version, info);
 
 Every changelog entry will be look like:
 
-```md
+```
 ## v0.1.0
 
 ### Date string in RFC 2822 format
