@@ -1,25 +1,4 @@
-use std::str::FromStr;
-
 use clap::{crate_authors, crate_description, crate_name, crate_version, App, Arg, ArgMatches};
-
-pub enum Version {
-    Major,
-    Minor,
-    Patch,
-}
-
-impl FromStr for Version {
-    type Err = &'static str;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "major" => Ok(Version::Major),
-            "minor" => Ok(Version::Minor),
-            "patch" => Ok(Version::Patch),
-            _ => Err("no match"),
-        }
-    }
-}
 
 pub(crate) fn args() -> ArgMatches {
     App::new(crate_name!())
