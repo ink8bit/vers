@@ -43,7 +43,12 @@ impl Changelog<'_> {
         );
 
         if !e.changes.is_empty() {
-            formatted.push_str(&format!("**Changes:** {}", e.changes));
+            formatted.push_str(&format!(
+                "
+**Changes:** {}
+",
+                e.changes
+            ));
         }
 
         if !e.commits.is_empty() {
@@ -51,7 +56,8 @@ impl Changelog<'_> {
                 "
 ```
 {}
-```",
+```
+",
                 e.commits
             ));
         }
