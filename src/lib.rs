@@ -6,7 +6,7 @@ mod version;
 use changelog::{Changelog, Entry};
 use version::Version;
 
-pub fn update(version: Version, info: &str) {
+pub fn update(version: Version, info: &str, no_commit: bool) -> String {
     let ver_type = match version {
         Version::Major => "major",
         Version::Minor => "minor",
@@ -22,7 +22,7 @@ pub fn update(version: Version, info: &str) {
 
     let changes = git::has_changes().expect("Could not execute git status");
     if !changes {
-        return println!("Nothing to commit, working tree clean");
+        panic!("Nothing to commit, working tree clean");
     }
 
     let commits = git::log().expect("Unable to collect your commits");
@@ -39,6 +39,10 @@ pub fn update(version: Version, info: &str) {
         Err(e) => eprintln!("{}", e),
     }
 
+    if no_commit {
+        return v;
+    }
+
     match git::commit(&v) {
         Ok(msg) => println!("{}", msg),
         Err(err) => eprintln!("{}", err),
@@ -53,4 +57,6 @@ pub fn update(version: Version, info: &str) {
         Ok(msg) => println!("{}", msg),
         Err(err) => eprintln!("{}", err),
     }
+
+    v
 }
