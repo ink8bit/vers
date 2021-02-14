@@ -29,14 +29,15 @@ vers minor --info "some changes"
 
 ```
 USAGE:
-    vers [OPTIONS] <type>
+    vers [FLAGS] [OPTIONS] <type>
 
 ARGS:
     <type>    Version type [possible values: major, minor, patch]
 
 FLAGS:
-    -h, --help       Prints help information
-    -V, --version    Prints version information
+    -h, --help         Prints help information
+    -n, --no-commit    Prevents committing your changes
+    -V, --version      Prints version information
 
 OPTIONS:
     -i, --info <string>    Sets info value
@@ -56,7 +57,8 @@ vers = { git = "https://github.com/ink8bit/vers", branch = "master" }
 And use this crate in the following way:
 
 ```rust
-vers::update(version, info);
+let v = vers::update("minor", "info", false);
+println!("Updated version: {}", v);
 ```
 
 ## Changelog format
