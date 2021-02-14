@@ -25,6 +25,23 @@ You should choose a version type: `major`, `minor`, or `patch`. And include chan
 vers minor --info "some changes"
 ```
 
+#### Usage
+
+```
+USAGE:
+    vers [OPTIONS] <type>
+
+ARGS:
+    <type>    Version type [possible values: major, minor, patch]
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+OPTIONS:
+    -i, --info <string>    Sets info value
+```
+
 ### Library
 
 > The crate is only available via git repo for now. You can include it using `rev`, `tag` or `branch` key. Read more in [Cargo docs](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#specifying-dependencies-from-git-repositories).

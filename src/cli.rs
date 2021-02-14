@@ -11,7 +11,7 @@ pub(crate) fn args() -> ArgMatches {
                 .short('i')
                 .long("info")
                 .value_name("string")
-                .about("Sets info value.")
+                .about("Sets info value")
                 .takes_value(true),
         )
         .get_matches()
