@@ -27,6 +27,8 @@ vers minor --info "some changes"
 
 ### Library
 
+> The crate is only available via git repo for now. You can include it using `rev`, `tag` or `branch` key. Read more in [Cargo docs](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#specifying-dependencies-from-git-repositories).
+
 You should add `vers` crate to your *Cargo.toml* file:
 
 ```
@@ -42,7 +44,7 @@ vers::update(version, info);
 
 ## Changelog format
 
-Every changelog entry will be look like:
+Every changelog entry has these contents:
 
 ```
 ## v0.1.0
@@ -52,4 +54,6 @@ Every changelog entry will be look like:
 **Releaser:** @username
 
 **Changes:** your changes
+
+List of commits in feature branch
 ```
