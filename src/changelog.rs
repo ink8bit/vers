@@ -29,26 +29,34 @@ impl Changelog<'_> {
     fn format(&self, e: &Entry) -> String {
         let dt = Local::now();
         let date = dt.to_rfc2822();
-        format!(
+        let mut formatted = format!(
             "
 ## {version}
 
 ### {date}
 
 **Releaser:** @{releaser}
-
-**Changes:** {changes}
-
-```
-{commits}
-```
 ",
             version = e.version,
-            changes = e.changes,
             date = date,
-            releaser = e.releaser,
-            commits = e.commits,
-        )
+            releaser = e.releaser
+        );
+
+        if !e.changes.is_empty() {
+            formatted.push_str(&format!("**Changes:** {}", e.changes));
+        }
+
+        if !e.commits.is_empty() {
+            formatted.push_str(&format!(
+                "
+```
+{}
+```",
+                e.commits
+            ));
+        }
+
+        formatted
     }
 
     fn write(&self, data: String) -> Result<(), Box<dyn Error>> {
