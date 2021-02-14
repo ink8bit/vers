@@ -14,5 +14,11 @@ pub(crate) fn args() -> ArgMatches {
                 .about("Sets info value")
                 .takes_value(true),
         )
+        .arg(
+            Arg::new("no_commit")
+                .short('n')
+                .long("no-commit")
+                .about("Prevents committing your changes"),
+        )
         .get_matches()
 }
