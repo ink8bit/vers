@@ -3,35 +3,9 @@ mod git;
 mod npm;
 
 use changelog::{Changelog, Entry};
-use std::str::FromStr;
 
-pub enum Version {
-    Major,
-    Minor,
-    Patch,
-}
-
-impl FromStr for Version {
-    type Err = &'static str;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "major" => Ok(Version::Major),
-            "minor" => Ok(Version::Minor),
-            "patch" => Ok(Version::Patch),
-            _ => Err("no match"),
-        }
-    }
-}
-
-pub fn update(version: Version, info: &str, no_commit: bool) -> String {
-    let ver_type = match version {
-        Version::Major => "major",
-        Version::Minor => "minor",
-        Version::Patch => "patch",
-    };
-
-    let v = match npm::version(ver_type) {
+pub fn update(version: &str, info: &str, no_commit: bool) -> String {
+    let v = match npm::version(version) {
         Ok(v) => v,
         Err(err) => panic!("Error: {}", err),
     };

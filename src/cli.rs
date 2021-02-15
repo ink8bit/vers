@@ -5,7 +5,12 @@ pub(crate) fn args() -> ArgMatches {
         .version(crate_version!())
         .about(crate_description!())
         .author(crate_authors!())
-        .arg(Arg::from("<type> 'Version type'").possible_values(&["major", "minor", "patch"]))
+        .arg(
+            Arg::new("version")
+                .index(1)
+                .possible_values(&["major", "minor", "patch"])
+                .required(true),
+        )
         .arg(
             Arg::new("info")
                 .short('i')
