@@ -4,6 +4,7 @@ mod npm;
 
 use changelog::{Changelog, Entry};
 
+/// Update version with provided info
 pub fn update(version: &str, info: &str, no_commit: bool) -> String {
     let v = match npm::version(version) {
         Ok(v) => v,
@@ -51,4 +52,25 @@ pub fn update(version: &str, info: &str, no_commit: bool) -> String {
     }
 
     v
+}
+
+/// Commit and tag changes
+pub fn save_changes(v: &str) {
+    match git::commit(&v) {
+        Ok(msg) => println!("{}", msg),
+        Err(err) => eprintln!("{}", err),
+    }
+
+    match git::tag(&v) {
+        Ok(msg) => println!("{}", msg),
+        Err(err) => eprintln!("{}", err),
+    }
+}
+
+/// Push changes to remote
+pub fn push_changes() {
+    match git::push() {
+        Ok(msg) => println!("{}", msg),
+        Err(err) => eprintln!("{}", err),
+    }
 }
