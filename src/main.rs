@@ -8,4 +8,12 @@ fn main() {
 
     let v = vers::update(version, info, no_commit);
     println!("Updated version: {}", v);
+
+    if let Err(e) = vers::save_changes(&v) {
+        panic!(e);
+    }
+
+    if let Err(e) = vers::push_changes() {
+        eprintln!("{}", e);
+    }
 }

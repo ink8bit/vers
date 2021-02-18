@@ -55,22 +55,20 @@ pub fn update(version: &str, info: &str, no_commit: bool) -> String {
 }
 
 /// Commit and tag changes
-pub fn save_changes(v: &str) {
-    match git::commit(&v) {
-        Ok(msg) => println!("{}", msg),
-        Err(err) => eprintln!("{}", err),
-    }
+pub fn save_changes(v: &str) -> Result<(), std::io::Error> {
+    let commit_msg = git::commit(&v)?;
+    println!("{}", commit_msg);
 
-    match git::tag(&v) {
-        Ok(msg) => println!("{}", msg),
-        Err(err) => eprintln!("{}", err),
-    }
+    let tag_msg = git::tag(&v)?;
+    println!("{}", tag_msg);
+
+    Ok(())
 }
 
-/// Push changes to remote
-pub fn push_changes() {
-    match git::push() {
-        Ok(msg) => println!("{}", msg),
-        Err(err) => eprintln!("{}", err),
-    }
+/// Push changes to the remote
+pub fn push_changes() -> Result<(), Box<dyn std::error::Error>> {
+    let msg = git::push()?;
+    println!("{}", msg);
+
+    Ok(())
 }
