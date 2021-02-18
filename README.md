@@ -60,6 +60,23 @@ let v = vers::update("minor", "info", false);
 println!("Updated version: {}", v);
 ```
 
+There are two more public functions you can use:
+
+- `save_changes` - to commit and tag your changes with a provided version string
+- `push_changes` - to upload your changes to the remote
+
+Be sure to check for errors while using these two functions:
+
+```rust
+if let Err(e) = vers::save_changes(&v) {
+    panic!(e);
+}
+
+if let Err(e) = vers::push_changes() {
+    eprintln!("{}", e);
+}
+```
+
 ## Changelog format
 
 Every changelog entry has these contents:
