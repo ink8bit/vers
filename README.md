@@ -87,7 +87,7 @@ Every changelog entry has these contents:
 
 ### Date string in RFC 2822 format
 
-**Releaser:** @username
+**Released by:** username
 
 **Changes:** your changes
 
