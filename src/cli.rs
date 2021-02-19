@@ -7,7 +7,6 @@ pub(crate) fn args() -> ArgMatches {
         .author(crate_authors!())
         .arg(
             Arg::new("version_type")
-                .index(1)
                 .possible_values(&["major", "minor", "patch"])
                 .required(true),
         )
