@@ -29,14 +29,15 @@ vers minor --info "some changes"
 
 ```
 USAGE:
-    vers [FLAGS] [OPTIONS] <version>
+    vers [FLAGS] [OPTIONS] <version_type>
 
 ARGS:
-    <version>    [possible values: major, minor, patch]
+    <version_type>    [possible values: major, minor, patch]
 
 FLAGS:
     -h, --help         Prints help information
     -n, --no-commit    Prevents committing your changes
+    -V, --version      Prints version information
 
 OPTIONS:
     -i, --info <string>    Sets info value
