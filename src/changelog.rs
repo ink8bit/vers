@@ -35,7 +35,7 @@ impl Changelog<'_> {
 
 ### {date}
 
-**Releaser:** @{releaser}
+**Released by:** {releaser}
 ",
             version = e.version,
             date = date,
