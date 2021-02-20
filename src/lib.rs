@@ -17,8 +17,6 @@ pub enum VersError {
     LogUpdate,
 }
 
-impl std::error::Error for VersError {}
-
 impl fmt::Display for VersError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
