@@ -3,22 +3,52 @@ mod git;
 mod npm;
 
 use changelog::{Changelog, Entry};
+use std::fmt;
+
+#[derive(Debug)]
+pub enum VersError {
+    GitName,
+    GitStatus,
+    GitLog,
+    GitCommit,
+    GitTag,
+    GitPush,
+    DirtyWorkingArea,
+    LogUpdate,
+}
+
+impl std::error::Error for VersError {}
+
+impl fmt::Display for VersError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            VersError::GitName => write!(f, "Could not get git user name"),
+            VersError::GitStatus => write!(f, "Could not execute git status"),
+            VersError::GitLog => write!(f, "Unable to collect your commits"),
+            VersError::GitCommit => write!(f, "Unable to commit your changes"),
+            VersError::GitTag => write!(f, "Unable to create git tag"),
+            VersError::GitPush => write!(f, "Unable to push your changes to the remote"),
+            VersError::DirtyWorkingArea => write!(f, "Working area has changes to commit.\nYou can update version only if working area is clean."),
+            VersError::LogUpdate => write!(f, "Could not update changelog file"),
+        }
+    }
+}
 
 /// Update version with provided info
-pub fn update(version: &str, info: &str, no_commit: bool) -> String {
+pub fn update(version: &str, info: &str, no_commit: bool) -> Result<String, VersError> {
     let v = match npm::version(version) {
         Ok(v) => v,
         Err(err) => panic!("Error: {}", err),
     };
 
-    let releaser = git::user_name().expect("Could not get git user name");
+    let releaser = git::user_name().map_err(|_| VersError::GitName)?;
 
-    let changes = git::has_changes().expect("Could not execute git status");
+    let changes = git::has_changes().map_err(|_| VersError::GitStatus)?;
     if changes {
-        panic!("Working area has changes to commit. You can update version only if working area is clean.");
+        return Err(VersError::DirtyWorkingArea);
     }
 
-    let commits = git::log().expect("Unable to collect your commits");
+    let commits = git::log().map_err(|_| VersError::GitStatus)?;
 
     let e = Entry {
         version: &v,
@@ -26,48 +56,42 @@ pub fn update(version: &str, info: &str, no_commit: bool) -> String {
         releaser,
         commits,
     };
+
     let log = Changelog { entry: e };
-    match log.update() {
-        Ok(v) => println!("{}", v),
-        Err(e) => eprintln!("{}", e),
-    }
+
+    let update_msg = log.update().map_err(|_| VersError::LogUpdate)?;
+    println!("{}", update_msg);
 
     if no_commit {
-        return v;
+        return Ok(v);
     }
 
-    match git::commit(&v) {
-        Ok(msg) => println!("{}", msg),
-        Err(err) => eprintln!("{}", err),
-    }
+    let commit_msg = git::commit(&v).map_err(|_| VersError::GitCommit)?;
+    println!("{}", commit_msg);
 
-    match git::tag(&v) {
-        Ok(msg) => println!("{}", msg),
-        Err(err) => eprintln!("{}", err),
-    }
+    let tag_msg = git::tag(&v).map_err(|_| VersError::GitTag)?;
+    println!("{}", tag_msg);
 
-    match git::push() {
-        Ok(msg) => println!("{}", msg),
-        Err(err) => eprintln!("{}", err),
-    }
+    let push_msg = git::push().map_err(|_| VersError::GitPush)?;
+    println!("{}", push_msg);
 
-    v
+    Ok(v)
 }
 
 /// Commit and tag changes
-pub fn save_changes(v: &str) -> Result<(), std::io::Error> {
-    let commit_msg = git::commit(&v)?;
+pub fn save_changes(v: &str) -> Result<(), VersError> {
+    let commit_msg = git::commit(&v).map_err(|_| VersError::GitCommit)?;
     println!("{}", commit_msg);
 
-    let tag_msg = git::tag(&v)?;
+    let tag_msg = git::tag(&v).map_err(|_| VersError::GitTag)?;
     println!("{}", tag_msg);
 
     Ok(())
 }
 
 /// Push changes to the remote
-pub fn push_changes() -> Result<(), Box<dyn std::error::Error>> {
-    let msg = git::push()?;
+pub fn push_changes() -> Result<(), VersError> {
+    let msg = git::push().map_err(|_| VersError::GitPush)?;
     println!("{}", msg);
 
     Ok(())
