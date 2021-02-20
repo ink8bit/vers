@@ -11,7 +11,7 @@ In general, `vers` does the following:
 - creates *CHANGELOG.md* file
 - creates commit using formatting: `Version bump: v0.1.0`
 - creates an annotated git tag
-- commits and pushes changes
+- and pushes changes
 
 ## How to use
 
