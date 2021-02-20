@@ -14,8 +14,8 @@ pub fn update(version: &str, info: &str, no_commit: bool) -> String {
     let releaser = git::user_name().expect("Could not get git user name");
 
     let changes = git::has_changes().expect("Could not execute git status");
-    if !changes {
-        panic!("Nothing to commit, working tree clean");
+    if changes {
+        panic!("Working area has changes to commit. You can update version only if working area is clean.");
     }
 
     let commits = git::log().expect("Unable to collect your commits");
