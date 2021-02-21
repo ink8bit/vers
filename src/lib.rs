@@ -15,6 +15,7 @@ pub enum VersError {
     GitPush,
     DirtyWorkingArea,
     LogUpdate,
+    VersionUpdate,
 }
 
 impl fmt::Display for VersError {
@@ -28,17 +29,14 @@ impl fmt::Display for VersError {
             VersError::GitPush => write!(f, "Unable to push your changes to the remote"),
             VersError::DirtyWorkingArea => write!(f, "Working area has changes to commit.\nYou can update version only if working area is clean."),
             VersError::LogUpdate => write!(f, "Could not update changelog file"),
+            VersError::VersionUpdate => write!(f, "Could not update version"),
         }
     }
 }
 
 /// Update version with provided info
 pub fn update(version: &str, info: &str, no_commit: bool) -> Result<String, VersError> {
-    let v = match npm::version(version) {
-        Ok(v) => v,
-        Err(err) => panic!("Error: {}", err),
-    };
-
+    let v = npm::version(version).map_err(|_| VersError::VersionUpdate)?;
     let releaser = git::user_name().map_err(|_| VersError::GitName)?;
 
     let changes = git::has_changes().map_err(|_| VersError::GitStatus)?;
