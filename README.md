@@ -57,8 +57,10 @@ vers = { git = "https://github.com/ink8bit/vers", branch = "master" }
 And use this crate in the following way:
 
 ```rust
-let v = vers::update("minor", "info", false);
-println!("Updated version: {}", v);
+match vers::update("minor", "changes", false) {
+    Ok(v) => println!("Updated version: {}", v),
+    Err(e) => eprintln!("{}", e),
+}
 ```
 
 There are two more public functions you can use:
