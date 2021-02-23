@@ -1,6 +1,6 @@
 [package]
 name = "vers"
-version = "0.0.8"
+version = "0.0.9"
 authors = ["ink8bit <ink8bit@users.noreply.github.com>"]
 edition = "2018"
 
