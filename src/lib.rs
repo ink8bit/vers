@@ -36,14 +36,13 @@ impl fmt::Display for VersError {
 
 /// Update version with provided info
 pub fn update(version: &str, info: &str, no_commit: bool) -> Result<String, VersError> {
-    let v = npm::version(version).map_err(|_| VersError::VersionUpdate)?;
-    let releaser = git::user_name().map_err(|_| VersError::GitName)?;
-
     let changes = git::has_changes().map_err(|_| VersError::GitStatus)?;
     if changes {
         return Err(VersError::DirtyWorkingArea);
     }
 
+    let v = npm::version(version).map_err(|_| VersError::VersionUpdate)?;
+    let releaser = git::user_name().map_err(|_| VersError::GitName)?;
     let commits = git::log().map_err(|_| VersError::GitStatus)?;
 
     let e = Entry {
