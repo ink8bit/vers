@@ -36,6 +36,15 @@ impl fmt::Display for VersError {
     }
 }
 
+/// Constructs releaser field with git user name and email
+fn releaser() -> Result<String, VersError> {
+    let user_name = git::user_name().map_err(|_| VersError::GitName)?;
+    let user_email = git::user_email().map_err(|_| VersError::GitEmail)?;
+    let releaser = format!("{name} <{email}>", name = user_name, email = user_email);
+
+    Ok(releaser)
+}
+
 /// Update version with provided info
 pub fn update(version: &str, info: &str, no_commit: bool) -> Result<String, VersError> {
     let changes = git::has_changes().map_err(|_| VersError::GitStatus)?;
@@ -44,10 +53,7 @@ pub fn update(version: &str, info: &str, no_commit: bool) -> Result<String, Vers
     }
 
     let v = npm::version(version).map_err(|_| VersError::VersionUpdate)?;
-
-    let user_name = git::user_name().map_err(|_| VersError::GitName)?;
-    let user_email = git::user_email().map_err(|_| VersError::GitEmail)?;
-    let releaser = format!("{name} <{email}>", name = user_name, email = user_email);
+    let releaser = releaser()?;
     let commits = git::log().map_err(|_| VersError::GitStatus)?;
 
     let e = Entry {
