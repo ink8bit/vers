@@ -95,3 +95,12 @@ Every changelog entry has these contents:
 
 List of commits in feature branch
 ```
+
+### Using github username
+
+You can use your GitHub username in **Released by:** field of your *CHANGELOG* file instead of *git* user name and email.
+You need to set env variable `VERS_GITHUB_NAME`. For example:
+
+```
+export VERS_GITHUB_NAME=username
+```
