@@ -3,6 +3,7 @@ mod git;
 mod npm;
 
 use changelog::{Changelog, Entry};
+use std::env;
 use std::fmt;
 
 #[derive(Debug)]
@@ -38,6 +39,11 @@ impl fmt::Display for VersError {
 
 /// Constructs releaser field with git user name and email
 fn releaser() -> Result<String, VersError> {
+    let github_name = env::var("VERS_GITHUB_NAME").unwrap_or_default();
+    if !github_name.is_empty() {
+        return Ok(format!("@{}", github_name));
+    }
+
     let user_name = git::user_name().map_err(|_| VersError::GitName)?;
     let user_email = git::user_email().map_err(|_| VersError::GitEmail)?;
     let releaser = format!("{name} <{email}>", name = user_name, email = user_email);
