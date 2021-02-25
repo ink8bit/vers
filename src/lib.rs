@@ -8,6 +8,7 @@ use std::fmt;
 #[derive(Debug)]
 pub enum VersError {
     GitName,
+    GitEmail,
     GitStatus,
     GitLog,
     GitCommit,
@@ -22,6 +23,7 @@ impl fmt::Display for VersError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             VersError::GitName => write!(f, "Could not get git user name"),
+            VersError::GitEmail => write!(f, "Could not get git user email"),
             VersError::GitStatus => write!(f, "Could not execute git status"),
             VersError::GitLog => write!(f, "Unable to collect your commits"),
             VersError::GitCommit => write!(f, "Unable to commit your changes"),
@@ -42,7 +44,10 @@ pub fn update(version: &str, info: &str, no_commit: bool) -> Result<String, Vers
     }
 
     let v = npm::version(version).map_err(|_| VersError::VersionUpdate)?;
-    let releaser = git::user_name().map_err(|_| VersError::GitName)?;
+
+    let user_name = git::user_name().map_err(|_| VersError::GitName)?;
+    let user_email = git::user_email().map_err(|_| VersError::GitEmail)?;
+    let releaser = format!("{name} <{email}>", name = user_name, email = user_email);
     let commits = git::log().map_err(|_| VersError::GitStatus)?;
 
     let e = Entry {
