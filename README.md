@@ -104,3 +104,5 @@ You need to set env variable `VERS_GITHUB_NAME`. For example:
 ```
 export VERS_GITHUB_NAME=username
 ```
+
+> If `vers` could not get value from env var `VERS_GITHUB_NAME`, your *git* user name and email will be used instead.
