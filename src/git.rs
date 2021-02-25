@@ -65,6 +65,15 @@ pub(crate) fn user_name() -> Result<String, Box<dyn Error>> {
     Ok(stdout.to_string())
 }
 
+pub(crate) fn user_email() -> Result<String, Box<dyn Error>> {
+    let out = Command::new("git")
+        .args(&["config", "user.email"])
+        .output()?;
+
+    let stdout = str::from_utf8(&out.stdout)?.trim();
+    Ok(stdout.to_string())
+}
+
 fn status() -> Result<String, Box<dyn Error>> {
     let out = Command::new("git").args(&["status", "-s"]).output()?;
     let stdout = str::from_utf8(&out.stdout)?.trim();
