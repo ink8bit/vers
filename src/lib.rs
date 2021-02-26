@@ -12,6 +12,7 @@ pub enum VersError {
     GitEmail,
     GitStatus,
     GitLog,
+    GitAddAll,
     GitCommit,
     GitTag,
     GitPush,
@@ -27,6 +28,7 @@ impl fmt::Display for VersError {
             VersError::GitEmail => write!(f, "Could not get git user email"),
             VersError::GitStatus => write!(f, "Could not execute git status"),
             VersError::GitLog => write!(f, "Unable to collect your commits"),
+            VersError::GitAddAll => write!(f, "Unable to add your files to staging area"),
             VersError::GitCommit => write!(f, "Unable to commit your changes"),
             VersError::GitTag => write!(f, "Unable to create git tag"),
             VersError::GitPush => write!(f, "Unable to push your changes to the remote"),
@@ -78,6 +80,8 @@ pub fn update(version: &str, info: &str, no_commit: bool) -> Result<String, Vers
         return Ok(v);
     }
 
+    git::add_all().map_err(|_| VersError::GitAddAll)?;
+
     let commit_msg = git::commit(&v).map_err(|_| VersError::GitCommit)?;
     println!("{}", commit_msg);
 
@@ -92,6 +96,8 @@ pub fn update(version: &str, info: &str, no_commit: bool) -> Result<String, Vers
 
 /// Commit and tag changes
 pub fn save_changes(v: &str) -> Result<(), VersError> {
+    git::add_all().map_err(|_| VersError::GitAddAll)?;
+
     let commit_msg = git::commit(&v).map_err(|_| VersError::GitCommit)?;
     println!("{}", commit_msg);
 

@@ -14,6 +14,11 @@ pub(crate) fn commit(version: &str) -> Result<&str, std::io::Error> {
     }
 }
 
+pub(crate) fn add_all() -> Result<(), Box<dyn Error>> {
+    Command::new("git").args(&["add", "--all"]).output()?;
+    Ok(())
+}
+
 fn branch() -> Result<String, Box<dyn Error>> {
     let out = Command::new("git")
         .args(&["branch", "--show-current"])
