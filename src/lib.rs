@@ -3,8 +3,7 @@ mod git;
 mod npm;
 
 use changelog::{Changelog, Entry};
-use std::env;
-use std::fmt;
+use std::{env, fmt, path::Path};
 
 #[derive(Debug)]
 pub enum VersError {
@@ -19,6 +18,7 @@ pub enum VersError {
     DirtyWorkingArea,
     LogUpdate,
     VersionUpdate,
+    PackageNotFound,
 }
 
 impl fmt::Display for VersError {
@@ -28,13 +28,14 @@ impl fmt::Display for VersError {
             VersError::GitEmail => write!(f, "Could not get git user email"),
             VersError::GitStatus => write!(f, "Could not execute git status"),
             VersError::GitLog => write!(f, "Unable to collect your commits"),
-            VersError::GitAddAll => write!(f, "Unable to add your files to staging area"),
+            VersError::GitAddAll => write!(f, "Unable to add your changes to staging area"),
             VersError::GitCommit => write!(f, "Unable to commit your changes"),
             VersError::GitTag => write!(f, "Unable to create git tag"),
             VersError::GitPush => write!(f, "Unable to push your changes to the remote"),
-            VersError::DirtyWorkingArea => write!(f, "Working area has changes to commit.\nYou can update version only if working area is clean."),
+            VersError::DirtyWorkingArea => write!(f, "Working area has changes to commit.\nYou can update version only if working area is clean"),
             VersError::LogUpdate => write!(f, "Could not update changelog file"),
             VersError::VersionUpdate => write!(f, "Could not update version"),
+            VersError::PackageNotFound => write!(f, "File package.json not found"),
         }
     }
 }
@@ -55,6 +56,10 @@ fn releaser() -> Result<String, VersError> {
 
 /// Update version with provided info
 pub fn update(version: &str, info: &str, no_commit: bool) -> Result<String, VersError> {
+    if !Path::new("package.json").exists() {
+        return Err(VersError::PackageNotFound);
+    }
+
     let changes = git::has_changes().map_err(|_| VersError::GitStatus)?;
     if changes {
         return Err(VersError::DirtyWorkingArea);
