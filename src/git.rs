@@ -5,7 +5,7 @@ use std::str;
 pub(crate) fn commit(version: &str) -> Result<&str, std::io::Error> {
     let ver_str = format!("Version bump: {}", version);
     let out = Command::new("git")
-        .args(&["commit", "-n", "-a", "--cleanup=strip", "-m", &ver_str])
+        .args(&["commit", "-n", "--cleanup=strip", "-m", &ver_str])
         .output();
 
     match out {
