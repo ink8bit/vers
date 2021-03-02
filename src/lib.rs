@@ -66,14 +66,14 @@ pub fn update(version: &str, info: &str, no_commit: bool) -> Result<String, Vers
     }
 
     let v = npm::version(version).map_err(|_| VersError::VersionUpdate)?;
-    let releaser = releaser()?;
+    let r = releaser()?;
     let commits = git::log().map_err(|_| VersError::GitStatus)?;
 
     let e = Entry {
         version: &v,
-        changes: info.to_string(),
-        releaser,
-        commits,
+        changes: info,
+        releaser: &r,
+        commits: &commits,
     };
 
     let log = Changelog { entry: e };
@@ -87,10 +87,10 @@ pub fn update(version: &str, info: &str, no_commit: bool) -> Result<String, Vers
 
     git::add_all().map_err(|_| VersError::GitAddAll)?;
 
-    let commit_msg = git::commit(&v).map_err(|_| VersError::GitCommit)?;
+    let commit_msg = git::commit(&v, &r, info).map_err(|_| VersError::GitCommit)?;
     println!("{}", commit_msg);
 
-    let tag_msg = git::tag(&v).map_err(|_| VersError::GitTag)?;
+    let tag_msg = git::tag(&v, &r, info).map_err(|_| VersError::GitTag)?;
     println!("{}", tag_msg);
 
     let push_msg = git::push().map_err(|_| VersError::GitPush)?;
@@ -100,13 +100,13 @@ pub fn update(version: &str, info: &str, no_commit: bool) -> Result<String, Vers
 }
 
 /// Commit and tag changes
-pub fn save_changes(v: &str) -> Result<(), VersError> {
+pub fn save_changes(v: &str, releaser_name: &str, info: &str) -> Result<(), VersError> {
     git::add_all().map_err(|_| VersError::GitAddAll)?;
 
-    let commit_msg = git::commit(&v).map_err(|_| VersError::GitCommit)?;
+    let commit_msg = git::commit(&v, &releaser_name, &info).map_err(|_| VersError::GitCommit)?;
     println!("{}", commit_msg);
 
-    let tag_msg = git::tag(&v).map_err(|_| VersError::GitTag)?;
+    let tag_msg = git::tag(&v, &releaser_name, &info).map_err(|_| VersError::GitTag)?;
     println!("{}", tag_msg);
 
     Ok(())

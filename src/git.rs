@@ -2,10 +2,26 @@ use std::error::Error;
 use std::process::Command;
 use std::str;
 
-pub(crate) fn commit(version: &str) -> Result<&str, std::io::Error> {
-    let ver_str = format!("Version bump: {}", version);
+pub(crate) fn commit<'a>(
+    version: &str,
+    releaser: &str,
+    info: &str,
+) -> Result<&'a str, std::io::Error> {
+    let mut comment = format!(
+        "Version bump: {v}
+
+Released by: {r}
+",
+        v = version,
+        r = releaser,
+    );
+
+    if !info.is_empty() {
+        comment.push_str(&info);
+    }
+
     let out = Command::new("git")
-        .args(&["commit", "-n", "--cleanup=strip", "-m", &ver_str])
+        .args(&["commit", "-n", "--cleanup=strip", "-m", &comment])
         .output();
 
     match out {
@@ -49,10 +65,22 @@ fn remote() -> Result<String, Box<dyn Error>> {
     Ok(stdout.to_string())
 }
 
-pub(crate) fn tag(v: &str) -> Result<String, std::io::Error> {
-    let version = format!("Version: {}", v);
+pub(crate) fn tag(v: &str, releaser: &str, info: &str) -> Result<String, std::io::Error> {
+    let mut comment = format!(
+        "Version: {v}
+
+Tagged by: {r}
+",
+        v = v,
+        r = releaser,
+    );
+
+    if !info.is_empty() {
+        comment.push_str(&info);
+    }
+
     let tag_cmd = Command::new("git")
-        .args(&["tag", "-a", v, "-m", &version])
+        .args(&["tag", "-a", v, "-m", &comment])
         .output();
 
     match tag_cmd {
