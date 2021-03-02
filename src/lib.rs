@@ -40,8 +40,9 @@ impl fmt::Display for VersError {
     }
 }
 
-/// Constructs releaser field with git user name and email
-fn releaser() -> Result<String, VersError> {
+/// Returns releaser field with _git_ user name and email
+/// or user GitHub handle if env var `VERS_GITHUB_NAME` is set
+pub fn releaser() -> Result<String, VersError> {
     let github_name = env::var("VERS_GITHUB_NAME").unwrap_or_default();
     if !github_name.is_empty() {
         return Ok(format!("@{}", github_name));
@@ -54,7 +55,15 @@ fn releaser() -> Result<String, VersError> {
     Ok(releaser)
 }
 
-/// Update version with provided info
+/// Updates version and creates changelog,
+/// commits and pushes your changes to the remote.
+/// Also creates git tag for your release.
+///
+/// # Arguments
+///
+/// - `version` - version string
+/// - `info` - some info you want to provide
+/// - `no-commit` - should your changes be committed, tag created and pushed
 pub fn update(version: &str, info: &str, no_commit: bool) -> Result<String, VersError> {
     if !Path::new("package.json").exists() {
         return Err(VersError::PackageNotFound);
@@ -99,20 +108,27 @@ pub fn update(version: &str, info: &str, no_commit: bool) -> Result<String, Vers
     Ok(v)
 }
 
-/// Commit and tag changes
-pub fn save_changes(v: &str, releaser_name: &str, info: &str) -> Result<(), VersError> {
+/// Commits and creates tag for your changes
+///
+/// # Arguments
+///
+/// - `version`- version string
+/// - `releaser_name` - releaser name which will be included in commit and tag message
+/// - `info` - additional info you want to provide
+pub fn save_changes(version: &str, releaser_name: &str, info: &str) -> Result<(), VersError> {
     git::add_all().map_err(|_| VersError::GitAddAll)?;
 
-    let commit_msg = git::commit(&v, &releaser_name, &info).map_err(|_| VersError::GitCommit)?;
+    let commit_msg =
+        git::commit(&version, &releaser_name, &info).map_err(|_| VersError::GitCommit)?;
     println!("{}", commit_msg);
 
-    let tag_msg = git::tag(&v, &releaser_name, &info).map_err(|_| VersError::GitTag)?;
+    let tag_msg = git::tag(&version, &releaser_name, &info).map_err(|_| VersError::GitTag)?;
     println!("{}", tag_msg);
 
     Ok(())
 }
 
-/// Push changes to the remote
+/// Pushes changes to the remote
 pub fn push_changes() -> Result<(), VersError> {
     let msg = git::push().map_err(|_| VersError::GitPush)?;
     println!("{}", msg);
