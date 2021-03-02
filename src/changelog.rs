@@ -13,9 +13,9 @@ pub(crate) struct Changelog<'a> {
 
 pub(crate) struct Entry<'a> {
     pub version: &'a str,
-    pub changes: String,
-    pub releaser: String,
-    pub commits: String,
+    pub changes: &'a str,
+    pub releaser: &'a str,
+    pub commits: &'a str,
 }
 
 impl Changelog<'_> {
