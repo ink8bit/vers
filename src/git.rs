@@ -9,7 +9,7 @@ pub(crate) fn commit<'a>(
 ) -> Result<&'a str, std::io::Error> {
     let comment = create_comment(&version, &releaser, &info, false);
     let out = Command::new("git")
-        .args(&["commit", "-n", "--cleanup=strip", "-m", &comment.trim()])
+        .args(&["commit", "-n", "--cleanup=strip", "-m", &comment])
         .output();
 
     match out {
@@ -70,7 +70,7 @@ fn create_comment(v: &str, releaser: &str, info: &str, is_tag: bool) -> String {
         comment.push_str(&format!("\nInfo: {}", info));
     }
 
-    comment
+    comment.trim().to_string()
 }
 
 pub(crate) fn tag(version: &str, releaser: &str, info: &str) -> Result<String, std::io::Error> {
@@ -202,7 +202,7 @@ Info: {i}",
         let fake_info = "";
 
         let actual = create_comment(fake_version, fake_user_name, fake_info, true);
-        let expected = format!("Version bump: {v}\n", v = fake_version,);
+        let expected = format!("Version bump: {v}", v = fake_version,);
 
         assert_eq!(actual, expected);
     }
@@ -214,7 +214,7 @@ Info: {i}",
         let fake_info = "";
 
         let actual = create_comment(fake_version, fake_user_name, fake_info, false);
-        let expected = format!("Version bump: {v}\n", v = fake_version,);
+        let expected = format!("Version bump: {v}", v = fake_version,);
 
         assert_eq!(actual, expected);
     }
