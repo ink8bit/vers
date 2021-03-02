@@ -7,21 +7,9 @@ pub(crate) fn commit<'a>(
     releaser: &str,
     info: &str,
 ) -> Result<&'a str, std::io::Error> {
-    let mut comment = format!(
-        "Version bump: {v}
-
-Released by: {r}
-",
-        v = version,
-        r = releaser,
-    );
-
-    if !info.is_empty() {
-        comment.push_str(&info);
-    }
-
+    let comment = create_comment(&version, &releaser, &info, false);
     let out = Command::new("git")
-        .args(&["commit", "-n", "--cleanup=strip", "-m", &comment])
+        .args(&["commit", "-n", "--cleanup=strip", "-m", &comment.trim()])
         .output();
 
     match out {
@@ -65,26 +53,34 @@ fn remote() -> Result<String, Box<dyn Error>> {
     Ok(stdout.to_string())
 }
 
-pub(crate) fn tag(v: &str, releaser: &str, info: &str) -> Result<String, std::io::Error> {
-    let mut comment = format!(
-        "Version: {v}
+fn by_msg<'a>(is_tag: bool) -> &'a str {
+    if is_tag {
+        return "Tagged";
+    }
+    "Released"
+}
 
-Tagged by: {r}
-",
-        v = v,
-        r = releaser,
-    );
-
+fn create_comment(v: &str, releaser: &str, info: &str, is_tag: bool) -> String {
+    let mut comment = format!("Version bump: {}\n", v);
+    let msg = by_msg(is_tag);
+    if !releaser.is_empty() {
+        comment.push_str(&format!("\n{m} by: {r}", m = msg, r = releaser));
+    }
     if !info.is_empty() {
-        comment.push_str(&info);
+        comment.push_str(&format!("\nInfo: {}", info));
     }
 
+    comment
+}
+
+pub(crate) fn tag(version: &str, releaser: &str, info: &str) -> Result<String, std::io::Error> {
+    let comment = create_comment(&version, &releaser, &info, true);
     let tag_cmd = Command::new("git")
-        .args(&["tag", "-a", v, "-m", &comment])
+        .args(&["tag", "-a", version, "-m", &comment])
         .output();
 
     match tag_cmd {
-        Ok(_) => Ok(format!("Successfully created new tag {}", v)),
+        Ok(_) => Ok(format!("Successfully created new tag {}", version)),
         Err(e) => Err(e),
     }
 }
@@ -139,4 +135,159 @@ pub(crate) fn log() -> Result<String, Box<dyn Error>> {
 
     let stdout = str::from_utf8(&out.stdout)?.trim();
     Ok(stdout.to_string())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_by_msg_tag() {
+        let actual = by_msg(true);
+
+        assert_eq!(actual, "Tagged");
+    }
+
+    #[test]
+    fn test_by_msg_commit() {
+        let actual = by_msg(false);
+
+        assert_eq!(actual, "Released");
+    }
+
+    #[test]
+    fn test_create_comment_tag() {
+        let fake_version = "v1.2.3";
+        let fake_user_name = "Fake username";
+        let fake_info = "Fake info";
+
+        let actual = create_comment(fake_version, fake_user_name, fake_info, true);
+        let expected = format!(
+            "Version bump: {v}
+
+Tagged by: {u}
+Info: {i}",
+            v = fake_version,
+            u = fake_user_name,
+            i = fake_info,
+        );
+
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_create_comment_commit() {
+        let fake_version = "v1.2.3";
+        let fake_user_name = "Fake username";
+        let fake_info = "Fake info";
+
+        let actual = create_comment(fake_version, fake_user_name, fake_info, false);
+        let expected = format!(
+            "Version bump: {v}
+
+Released by: {u}
+Info: {i}",
+            v = fake_version,
+            u = fake_user_name,
+            i = fake_info,
+        );
+
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_create_comment_tag_empty_username_and_info() {
+        let fake_version = "v1.2.3";
+        let fake_user_name = "";
+        let fake_info = "";
+
+        let actual = create_comment(fake_version, fake_user_name, fake_info, true);
+        let expected = format!("Version bump: {v}\n", v = fake_version,);
+
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_create_comment_commit_empty_username_and_info() {
+        let fake_version = "v1.2.3";
+        let fake_user_name = "";
+        let fake_info = "";
+
+        let actual = create_comment(fake_version, fake_user_name, fake_info, false);
+        let expected = format!("Version bump: {v}\n", v = fake_version,);
+
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_create_comment_tag_empty_username() {
+        let fake_version = "v1.2.3";
+        let fake_user_name = "";
+        let fake_info = "Fake info";
+
+        let actual = create_comment(fake_version, fake_user_name, fake_info, true);
+        let expected = format!(
+            "Version bump: {v}
+
+Info: {i}",
+            v = fake_version,
+            i = fake_info,
+        );
+
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_create_comment_commit_empty_username() {
+        let fake_version = "v1.2.3";
+        let fake_user_name = "";
+        let fake_info = "Fake info";
+
+        let actual = create_comment(fake_version, fake_user_name, fake_info, false);
+        let expected = format!(
+            "Version bump: {v}
+
+Info: {i}",
+            v = fake_version,
+            i = fake_info,
+        );
+
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_create_comment_tag_empty_info() {
+        let fake_version = "v1.2.3";
+        let fake_user_name = "Fake username";
+        let fake_info = "";
+
+        let actual = create_comment(fake_version, fake_user_name, fake_info, true);
+        let expected = format!(
+            "Version bump: {v}
+
+Tagged by: {u}",
+            v = fake_version,
+            u = fake_user_name,
+        );
+
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_create_comment_commit_empty_info() {
+        let fake_version = "v1.2.3";
+        let fake_user_name = "Fake username";
+        let fake_info = "";
+
+        let actual = create_comment(fake_version, fake_user_name, fake_info, false);
+        let expected = format!(
+            "Version bump: {v}
+
+Released by: {u}",
+            v = fake_version,
+            u = fake_user_name,
+        );
+
+        assert_eq!(actual, expected);
+    }
 }
