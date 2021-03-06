@@ -54,7 +54,13 @@ You should add `vers` crate to your *Cargo.toml* file:
 vers = { git = "https://github.com/ink8bit/vers", branch = "master" }
 ```
 
-And use this crate in the following way:
+### Public API
+
+- [update](#update) - updates `CHANGELOG.md`, `package.json`, `package-lock.json` (if exists), commits changes, creates tag and pushes changes to the remote.
+- [save_changes](#save_changes) - creates commit and tag
+- [push_changes](#push_changes) - pushes changes to the remote
+
+#### `update` function
 
 ```rust
 match vers::update("minor", "changes", false) {
@@ -63,20 +69,19 @@ match vers::update("minor", "changes", false) {
 }
 ```
 
-There are two more public functions you can use:
-
-- `save_changes` - to commit and tag your changes with a provided version string
-- `push_changes` - to upload your changes to the remote
-
-Be sure to check for errors while using these two functions:
+#### `save_changes` function
 
 ```rust
-if let Err(e) = vers::save_changes(&v) {
+if let Err(e) = vers::save_changes(&v, releaser_name: "username", info: "some info") {
     panic!(e);
 }
+```
 
+#### `push_changes` function
+
+```rust
 if let Err(e) = vers::push_changes() {
-    eprintln!("{}", e);
+    panic!(e);
 }
 ```
 
@@ -98,7 +103,11 @@ List of commits in feature branch
 
 ### Using github username
 
-You can use your GitHub username in **Released by:** field of your *CHANGELOG* file instead of *git* user name and email.
+You can use your GitHub username in:
+- `Released by:` field of your _CHANGELOG.md_ file
+- `Tagged by:` field in your tag
+- `Released by:` field in your commit message
+
 You need to set env variable `VERS_GITHUB_NAME`. For example:
 
 ```
