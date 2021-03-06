@@ -2,6 +2,9 @@ use std::error::Error;
 use std::process::Command;
 use std::str;
 
+/// Commits your changes without running pre-commit hooks
+///
+/// Uses `git commit -n --cleanup=strip -m <message>` command under the hood
 pub(crate) fn commit<'a>(
     version: &str,
     releaser: &str,
@@ -18,11 +21,15 @@ pub(crate) fn commit<'a>(
     }
 }
 
+/// Adds all files to `git` staging area
+///
+/// Uses `git add --all` command under the hood
 pub(crate) fn add_all() -> Result<(), Box<dyn Error>> {
     Command::new("git").args(&["add", "--all"]).output()?;
     Ok(())
 }
 
+/// Returns current `git` branch value
 pub(crate) fn branch() -> Result<String, Box<dyn Error>> {
     let current_branch = branch_name()?;
     if !current_branch.is_empty() {
@@ -33,6 +40,8 @@ pub(crate) fn branch() -> Result<String, Box<dyn Error>> {
 }
 
 /// Returns current `git` branch name
+///
+/// Uses `git branch --show-current` command under the hood
 fn branch_name() -> Result<String, Box<dyn Error>> {
     let out = Command::new("git")
         .args(&["branch", "--show-current"])
@@ -42,8 +51,11 @@ fn branch_name() -> Result<String, Box<dyn Error>> {
     Ok(stdout.to_string())
 }
 
-/// Returns current git branch name.
+/// Returns current `git` branch name fallback value
+///
 /// It's only to support previous `git` versions
+///
+/// Uses `git rev-parse --abbrev-ref HEAD` command under the hood
 fn branch_name_fallback() -> Result<String, Box<dyn Error>> {
     let out = Command::new("git")
         .args(&["rev-parse", "--abbrev-ref", "HEAD"])
@@ -53,6 +65,12 @@ fn branch_name_fallback() -> Result<String, Box<dyn Error>> {
     Ok(stdout.to_string())
 }
 
+/// Pushes your changes to the remote
+///
+/// # Arguments
+///
+/// - `branch` - `git` branch value which you want to push to the remote
+/// - `remote_name` - `git` remote value
 pub(crate) fn push(branch: &str, remote_name: &str) -> Result<String, Box<dyn Error>> {
     let _out = Command::new("git")
         .args(&["push", "--follow-tags", remote_name, &branch])
@@ -64,6 +82,9 @@ pub(crate) fn push(branch: &str, remote_name: &str) -> Result<String, Box<dyn Er
     ))
 }
 
+/// Returns `git` remote value
+///
+/// Uses `git remote` command under the hood
 pub(crate) fn remote() -> Result<String, Box<dyn Error>> {
     let out = Command::new("git").arg("remote").output()?;
     let stdout = str::from_utf8(&out.stdout)?.trim();
@@ -78,8 +99,16 @@ fn by_msg<'a>(is_tag: bool) -> &'a str {
     "Released"
 }
 
-fn create_comment(v: &str, releaser: &str, info: &str, is_tag: bool) -> String {
-    let mut comment = format!("Version bump: {}\n", v);
+/// Returns message for tag or commit
+///
+/// # Arguments
+///
+/// - `version` - version string
+/// - `releaser` - releaser string
+/// - `info` - info string
+/// - `is_tag` - should the message be for tag
+fn create_comment(version: &str, releaser: &str, info: &str, is_tag: bool) -> String {
+    let mut comment = format!("Version bump: {}\n", version);
     let msg = by_msg(is_tag);
     if !releaser.is_empty() {
         comment.push_str(&format!("\n{m} by: {r}", m = msg, r = releaser));
@@ -90,6 +119,15 @@ fn create_comment(v: &str, releaser: &str, info: &str, is_tag: bool) -> String {
     comment.trim().to_string()
 }
 
+/// Creates `git` tag
+///
+/// # Arguments
+///
+/// - `version` - version string
+/// - `releaser` - releaser string
+/// - `info` - info string
+///
+/// Uses `git tag -a <version> -m <message>` command under the hood
 pub(crate) fn tag(version: &str, releaser: &str, info: &str) -> Result<String, std::io::Error> {
     let comment = create_comment(&version, &releaser, &info, true);
     let tag_cmd = Command::new("git")
@@ -102,6 +140,9 @@ pub(crate) fn tag(version: &str, releaser: &str, info: &str) -> Result<String, s
     }
 }
 
+/// Returns `git` user name
+///
+/// Uses `git config user.name` command under the hood
 pub(crate) fn user_name() -> Result<String, Box<dyn Error>> {
     let out = Command::new("git")
         .args(&["config", "user.name"])
@@ -111,6 +152,9 @@ pub(crate) fn user_name() -> Result<String, Box<dyn Error>> {
     Ok(stdout.to_string())
 }
 
+/// Returns `git` user email
+///
+/// Uses `git config user.email` command under the hood
 pub(crate) fn user_email() -> Result<String, Box<dyn Error>> {
     let out = Command::new("git")
         .args(&["config", "user.email"])
@@ -120,12 +164,16 @@ pub(crate) fn user_email() -> Result<String, Box<dyn Error>> {
     Ok(stdout.to_string())
 }
 
+/// Returns `git` status command value
+///
+/// Uses `git status -s` command under the hood
 fn status() -> Result<String, Box<dyn Error>> {
     let out = Command::new("git").args(&["status", "-s"]).output()?;
     let stdout = str::from_utf8(&out.stdout)?.trim();
     Ok(stdout.to_string())
 }
 
+/// Returns true if current directory has uncommitted changes
 pub(crate) fn has_changes() -> Result<bool, Box<dyn Error>> {
     match status() {
         Ok(v) => {

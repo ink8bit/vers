@@ -13,6 +13,8 @@ In general, `vers` does the following:
 - creates an annotated git tag
 - and pushes changes
 
+`vers` works only with _git_.
+
 ## How to use
 
 You can use it as a binary or as a library.
@@ -87,7 +89,7 @@ if let Err(e) = vers::push_changes() {
 }
 ```
 
-#### releaser
+#### `releaser`
 
 ```rust
 let releaser = match vers::releaser() {

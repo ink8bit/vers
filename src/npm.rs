@@ -2,6 +2,9 @@ use std::error::Error;
 use std::process::Command;
 use std::str;
 
+/// Updates `package.json` and `package-lock.json` _version_ field
+///
+/// Uses `npm version` command under the hood
 pub(crate) fn version(ver_type: &str) -> Result<String, Box<dyn Error>> {
     let out = Command::new("npm")
         .args(&[

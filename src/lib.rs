@@ -158,7 +158,7 @@ pub fn push_changes() -> Result<(), VersError> {
     Ok(())
 }
 
-/// Returns current git branch value
+/// Returns current `git` branch value
 pub fn current_branch_name() -> Result<String, VersError> {
     let branch_name = git::branch().map_err(|_| VersError::GitBranch)?;
     if branch_name.is_empty() {
