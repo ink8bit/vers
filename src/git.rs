@@ -23,7 +23,7 @@ pub(crate) fn add_all() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn branch() -> Result<String, Box<dyn Error>> {
+pub(crate) fn branch() -> Result<String, Box<dyn Error>> {
     let current_branch = branch_name()?;
     if !current_branch.is_empty() {
         return Ok(current_branch);
@@ -53,21 +53,18 @@ fn branch_name_fallback() -> Result<String, Box<dyn Error>> {
     Ok(stdout.to_string())
 }
 
-pub(crate) fn push() -> Result<String, Box<dyn Error>> {
-    let branch_name = branch()?;
-    let origin = remote()?;
-
+pub(crate) fn push(branch: &str, remote_name: &str) -> Result<String, Box<dyn Error>> {
     let _out = Command::new("git")
-        .args(&["push", "--follow-tags", origin.as_str(), &branch_name])
+        .args(&["push", "--follow-tags", remote_name, &branch])
         .output()?;
 
     Ok(format!(
         "Successfully pushed changes to remote branch '{}'",
-        branch_name
+        branch
     ))
 }
 
-fn remote() -> Result<String, Box<dyn Error>> {
+pub(crate) fn remote() -> Result<String, Box<dyn Error>> {
     let out = Command::new("git").arg("remote").output()?;
     let stdout = str::from_utf8(&out.stdout)?.trim();
 
@@ -90,7 +87,6 @@ fn create_comment(v: &str, releaser: &str, info: &str, is_tag: bool) -> String {
     if !info.is_empty() {
         comment.push_str(&format!("\nInfo: {}", info));
     }
-
     comment.trim().to_string()
 }
 
