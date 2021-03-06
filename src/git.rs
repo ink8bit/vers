@@ -24,8 +24,29 @@ pub(crate) fn add_all() -> Result<(), Box<dyn Error>> {
 }
 
 fn branch() -> Result<String, Box<dyn Error>> {
+    let current_branch = branch_name()?;
+    if !current_branch.is_empty() {
+        return Ok(current_branch);
+    }
+    let current_branch_fallback = branch_name_fallback()?;
+    Ok(current_branch_fallback)
+}
+
+/// Returns current `git` branch name
+fn branch_name() -> Result<String, Box<dyn Error>> {
     let out = Command::new("git")
         .args(&["branch", "--show-current"])
+        .output()?;
+    let stdout = str::from_utf8(&out.stdout)?.trim();
+
+    Ok(stdout.to_string())
+}
+
+/// Returns current git branch name.
+/// It's only to support previous `git` versions
+fn branch_name_fallback() -> Result<String, Box<dyn Error>> {
+    let out = Command::new("git")
+        .args(&["rev-parse", "--abbrev-ref", "HEAD"])
         .output()?;
     let stdout = str::from_utf8(&out.stdout)?.trim();
 
