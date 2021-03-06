@@ -10,7 +10,7 @@ pub enum VersError {
     GitName,
     GitEmail,
     GitBranch,
-    GitOrigin,
+    GitRemote,
     GitStatus,
     GitLog,
     GitAddAll,
@@ -29,7 +29,7 @@ impl fmt::Display for VersError {
             VersError::GitName => write!(f, "Could not get git user name"),
             VersError::GitEmail => write!(f, "Could not get git user email"),
             VersError::GitBranch => write!(f, "Could not get current git branch value"),
-            VersError::GitOrigin => write!(f, "Could not get git remote name"),
+            VersError::GitRemote => write!(f, "Could not get git remote name"),
             VersError::GitStatus => write!(f, "Could not execute git status"),
             VersError::GitLog => write!(f, "Unable to collect your commits"),
             VersError::GitAddAll => write!(f, "Unable to add your changes to staging area"),
@@ -107,7 +107,13 @@ pub fn update(version: &str, info: &str, no_commit: bool) -> Result<String, Vers
     println!("{}", tag_msg);
 
     let current_branch = git::branch().map_err(|_| VersError::GitBranch)?;
-    let remote_name = git::remote().map_err(|_| VersError::GitOrigin)?;
+    if current_branch.is_empty() {
+        return Err(VersError::GitBranch);
+    }
+    let remote_name = git::remote().map_err(|_| VersError::GitRemote)?;
+    if remote_name.is_empty() {
+        return Err(VersError::GitRemote);
+    }
     let push_msg = git::push(&current_branch, &remote_name).map_err(|_| VersError::GitPush)?;
     println!("{}", push_msg);
 
@@ -137,7 +143,15 @@ pub fn save_changes(version: &str, releaser_name: &str, info: &str) -> Result<()
 /// Pushes changes to the remote
 pub fn push_changes() -> Result<(), VersError> {
     let current_branch = git::branch().map_err(|_| VersError::GitBranch)?;
-    let remote_name = git::remote().map_err(|_| VersError::GitOrigin)?;
+    if current_branch.is_empty() {
+        return Err(VersError::GitBranch);
+    }
+
+    let remote_name = git::remote().map_err(|_| VersError::GitRemote)?;
+    if remote_name.is_empty() {
+        return Err(VersError::GitRemote);
+    }
+
     let msg = git::push(&current_branch, &remote_name).map_err(|_| VersError::GitPush)?;
     println!("{}", msg);
 
