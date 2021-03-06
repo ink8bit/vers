@@ -9,6 +9,8 @@ use std::{env, fmt, path::Path};
 pub enum VersError {
     GitName,
     GitEmail,
+    GitBranch,
+    GitOrigin,
     GitStatus,
     GitLog,
     GitAddAll,
@@ -26,6 +28,8 @@ impl fmt::Display for VersError {
         match self {
             VersError::GitName => write!(f, "Could not get git user name"),
             VersError::GitEmail => write!(f, "Could not get git user email"),
+            VersError::GitBranch => write!(f, "Could not get current git branch value"),
+            VersError::GitOrigin => write!(f, "Could not get git remote name"),
             VersError::GitStatus => write!(f, "Could not execute git status"),
             VersError::GitLog => write!(f, "Unable to collect your commits"),
             VersError::GitAddAll => write!(f, "Unable to add your changes to staging area"),
@@ -102,7 +106,9 @@ pub fn update(version: &str, info: &str, no_commit: bool) -> Result<String, Vers
     let tag_msg = git::tag(&v, &r, info).map_err(|_| VersError::GitTag)?;
     println!("{}", tag_msg);
 
-    let push_msg = git::push().map_err(|_| VersError::GitPush)?;
+    let current_branch = git::branch().map_err(|_| VersError::GitBranch)?;
+    let remote_name = git::remote().map_err(|_| VersError::GitOrigin)?;
+    let push_msg = git::push(&current_branch, &remote_name).map_err(|_| VersError::GitPush)?;
     println!("{}", push_msg);
 
     Ok(v)
@@ -130,7 +136,9 @@ pub fn save_changes(version: &str, releaser_name: &str, info: &str) -> Result<()
 
 /// Pushes changes to the remote
 pub fn push_changes() -> Result<(), VersError> {
-    let msg = git::push().map_err(|_| VersError::GitPush)?;
+    let current_branch = git::branch().map_err(|_| VersError::GitBranch)?;
+    let remote_name = git::remote().map_err(|_| VersError::GitOrigin)?;
+    let msg = git::push(&current_branch, &remote_name).map_err(|_| VersError::GitPush)?;
     println!("{}", msg);
 
     Ok(())
