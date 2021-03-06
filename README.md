@@ -59,8 +59,10 @@ vers = { git = "https://github.com/ink8bit/vers", branch = "master" }
 - [update](#update) - updates `CHANGELOG.md`, `package.json`, `package-lock.json` (if exists), commits changes, creates tag and pushes changes to the remote.
 - [save_changes](#save_changes) - creates commit and tag
 - [push_changes](#push_changes) - pushes changes to the remote
+- [releaser](#releaser) - returns your git user name and user email, or your GitHub handle if you set env var [VERS_GITHUB_NAME](#using-github-username)
+- [current_branch_name](#current_branch_name) - returns current git branch value
 
-#### `update` function
+#### `update`
 
 ```rust
 match vers::update("minor", "changes", false) {
@@ -69,7 +71,7 @@ match vers::update("minor", "changes", false) {
 }
 ```
 
-#### `save_changes` function
+#### `save_changes`
 
 ```rust
 if let Err(e) = vers::save_changes(&v, releaser_name: "username", info: "some info") {
@@ -77,12 +79,30 @@ if let Err(e) = vers::save_changes(&v, releaser_name: "username", info: "some in
 }
 ```
 
-#### `push_changes` function
+#### `push_changes`
 
 ```rust
 if let Err(e) = vers::push_changes() {
     panic!(e);
 }
+```
+
+#### releaser
+
+```rust
+let releaser = match vers::releaser() {
+    Ok(value) => value,
+    Err(e) => panic!(e),
+};
+```
+
+#### `current_branch_name`
+
+```rust
+let branch = match vers::current_branch_name() {
+    Ok(value) => value,
+    Err(e) => panic!(e),
+};
 ```
 
 ## Changelog format
