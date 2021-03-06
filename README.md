@@ -126,7 +126,7 @@ List of commits in feature branch
 ### Using github username
 
 You can use your GitHub username in:
-- `Released by:` field of your _CHANGELOG.md_ file
+- `Released by:` field in your _CHANGELOG.md_ file
 - `Tagged by:` field in your tag
 - `Released by:` field in your commit message
 
