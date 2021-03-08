@@ -191,7 +191,7 @@ pub(crate) fn log() -> Result<String, Box<dyn Error>> {
     let out = Command::new("git")
         .args(&[
             "log",
-            "--pretty=format:%h | %an: %s",
+            "--pretty=format:%h | %an | %s",
             "--no-merges",
             "master..HEAD",
             "--reverse",
