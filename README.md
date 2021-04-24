@@ -76,8 +76,8 @@ match vers::update("minor", "changes", false) {
 #### `save_changes`
 
 ```rust
-if let Err(e) = vers::save_changes(&v, releaser_name: "username", info: "some info") {
-    panic!(e);
+if let Err(e) = vers::save_changes(&v, "releaser", "some info") {
+    panic!("{}", e);
 }
 ```
 
@@ -85,7 +85,7 @@ if let Err(e) = vers::save_changes(&v, releaser_name: "username", info: "some in
 
 ```rust
 if let Err(e) = vers::push_changes() {
-    panic!(e);
+    panic!("{}", e);
 }
 ```
 
@@ -94,7 +94,7 @@ if let Err(e) = vers::push_changes() {
 ```rust
 let releaser = match vers::releaser() {
     Ok(value) => value,
-    Err(e) => panic!(e),
+    Err(e) => panic!("{}", e),
 };
 ```
 
@@ -103,7 +103,7 @@ let releaser = match vers::releaser() {
 ```rust
 let branch = match vers::current_branch_name() {
     Ok(value) => value,
-    Err(e) => panic!(e),
+    Err(e) => panic!("{}", e),
 };
 ```
 
