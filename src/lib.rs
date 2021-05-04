@@ -2,8 +2,14 @@ mod changelog;
 mod git;
 mod npm;
 
+use terminal_spinners::{SpinnerBuilder, SpinnerHandle, DOTS};
+
 use changelog::{Changelog, Entry};
 use std::{env, fmt, path::Path};
+
+const COMMIT_MSG: &str = "Committing...";
+const TAG_MSG: &str = "Tagging...";
+const PUSH_MSG: &str = "Pushing...";
 
 #[derive(Debug)]
 pub enum VersError {
@@ -100,12 +106,17 @@ pub fn update(version: &str, info: &str, no_commit: bool) -> Result<String, Vers
 
     git::add_all().map_err(|_| VersError::GitAddAll)?;
 
+    let sp = spinner(COMMIT_MSG);
     let commit_msg = git::commit(&v, &r, info).map_err(|_| VersError::GitCommit)?;
-    println!("{}", commit_msg);
+    sp.text(commit_msg);
+    sp.done();
 
+    let sp = spinner(TAG_MSG);
     let tag_msg = git::tag(&v, &r, info).map_err(|_| VersError::GitTag)?;
-    println!("{}", tag_msg);
+    sp.text(tag_msg);
+    sp.done();
 
+    let sp = spinner(PUSH_MSG);
     let current_branch = git::branch().map_err(|_| VersError::GitBranch)?;
     if current_branch.is_empty() {
         return Err(VersError::GitBranch);
@@ -115,7 +126,8 @@ pub fn update(version: &str, info: &str, no_commit: bool) -> Result<String, Vers
         return Err(VersError::GitRemote);
     }
     let push_msg = git::push(&current_branch, &remote_name).map_err(|_| VersError::GitPush)?;
-    println!("{}", push_msg);
+    sp.text(push_msg);
+    sp.done();
 
     Ok(v)
 }
@@ -130,18 +142,23 @@ pub fn update(version: &str, info: &str, no_commit: bool) -> Result<String, Vers
 pub fn save_changes(version: &str, releaser_name: &str, info: &str) -> Result<(), VersError> {
     git::add_all().map_err(|_| VersError::GitAddAll)?;
 
+    let sp = spinner(COMMIT_MSG);
     let commit_msg =
         git::commit(&version, &releaser_name, &info).map_err(|_| VersError::GitCommit)?;
-    println!("{}", commit_msg);
+    sp.text(commit_msg);
+    sp.done();
 
+    let sp = spinner(TAG_MSG);
     let tag_msg = git::tag(&version, &releaser_name, &info).map_err(|_| VersError::GitTag)?;
-    println!("{}", tag_msg);
+    sp.text(tag_msg);
+    sp.done();
 
     Ok(())
 }
 
 /// Pushes changes to the remote
 pub fn push_changes() -> Result<(), VersError> {
+    let sp = spinner(PUSH_MSG);
     let current_branch = git::branch().map_err(|_| VersError::GitBranch)?;
     if current_branch.is_empty() {
         return Err(VersError::GitBranch);
@@ -153,7 +170,8 @@ pub fn push_changes() -> Result<(), VersError> {
     }
 
     let msg = git::push(&current_branch, &remote_name).map_err(|_| VersError::GitPush)?;
-    println!("{}", msg);
+    sp.text(msg);
+    sp.done();
 
     Ok(())
 }
@@ -165,4 +183,9 @@ pub fn current_branch_name() -> Result<String, VersError> {
         return Err(VersError::GitBranch);
     }
     Ok(branch_name)
+}
+
+/// Creates spinner
+fn spinner(message: &'static str) -> SpinnerHandle {
+    SpinnerBuilder::new().spinner(&DOTS).text(message).start()
 }
