@@ -76,7 +76,7 @@ match vers::update("minor", "changes", false) {
 #### `save_changes`
 
 ```rust
-if let Err(e) = vers::save_changes(&v, "releaser", "some info") {
+if let Err(e) = vers::save_changes("v1.2.3", "releaser", "some info") {
     panic!("{}", e);
 }
 ```
