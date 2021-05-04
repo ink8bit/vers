@@ -23,13 +23,13 @@ You can use it as a binary or as a library.
 
 You should choose a version type: `major`, `minor`, or `patch`. And include changes:
 
-```
+```console
 vers minor --info "some changes"
 ```
 
 #### Usage
 
-```
+```console
 USAGE:
     vers [FLAGS] [OPTIONS] <version_type>
 
@@ -51,7 +51,7 @@ OPTIONS:
 
 You should add `vers` crate to your *Cargo.toml* file:
 
-```
+```console
 [dependencies]
 vers = { git = "https://github.com/ink8bit/vers", branch = "master" }
 ```
@@ -111,7 +111,7 @@ let branch = match vers::current_branch_name() {
 
 Every changelog entry has these contents:
 
-```
+```console
 ## v0.1.0
 
 ### Date string in RFC 2822 format
@@ -126,13 +126,14 @@ List of commits in feature branch
 ### Using github username
 
 You can use your GitHub username in:
+
 - `Released by:` field in your _CHANGELOG.md_ file
 - `Tagged by:` field in your tag
 - `Released by:` field in your commit message
 
 You need to set env variable `VERS_GITHUB_NAME`. For example:
 
-```
+```console
 export VERS_GITHUB_NAME=username
 ```
 
