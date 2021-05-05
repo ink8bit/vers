@@ -2,6 +2,7 @@ mod changelog;
 mod git;
 mod npm;
 
+use colored::*;
 use terminal_spinners::{SpinnerBuilder, SpinnerHandle, DOTS};
 
 use changelog::{Changelog, Entry};
@@ -108,13 +109,11 @@ pub fn update(version: &str, info: &str, no_commit: bool) -> Result<String, Vers
 
     let sp = spinner(COMMIT_MSG);
     let commit_msg = git::commit(&v, &r, info).map_err(|_| VersError::GitCommit)?;
-    sp.text(commit_msg);
-    sp.done();
+    spinner_text(sp, &commit_msg);
 
     let sp = spinner(TAG_MSG);
     let tag_msg = git::tag(&v, &r, info).map_err(|_| VersError::GitTag)?;
-    sp.text(tag_msg);
-    sp.done();
+    spinner_text(sp, &tag_msg);
 
     let sp = spinner(PUSH_MSG);
     let current_branch = git::branch().map_err(|_| VersError::GitBranch)?;
@@ -126,8 +125,7 @@ pub fn update(version: &str, info: &str, no_commit: bool) -> Result<String, Vers
         return Err(VersError::GitRemote);
     }
     let push_msg = git::push(&current_branch, &remote_name).map_err(|_| VersError::GitPush)?;
-    sp.text(push_msg);
-    sp.done();
+    spinner_text(sp, &push_msg);
 
     Ok(v)
 }
@@ -145,13 +143,11 @@ pub fn save_changes(version: &str, releaser_name: &str, info: &str) -> Result<()
     let sp = spinner(COMMIT_MSG);
     let commit_msg =
         git::commit(&version, &releaser_name, &info).map_err(|_| VersError::GitCommit)?;
-    sp.text(commit_msg);
-    sp.done();
+    spinner_text(sp, &commit_msg);
 
     let sp = spinner(TAG_MSG);
     let tag_msg = git::tag(&version, &releaser_name, &info).map_err(|_| VersError::GitTag)?;
-    sp.text(tag_msg);
-    sp.done();
+    spinner_text(sp, &tag_msg);
 
     Ok(())
 }
@@ -170,8 +166,7 @@ pub fn push_changes() -> Result<(), VersError> {
     }
 
     let msg = git::push(&current_branch, &remote_name).map_err(|_| VersError::GitPush)?;
-    sp.text(msg);
-    sp.done();
+    spinner_text(sp, &msg);
 
     Ok(())
 }
@@ -188,4 +183,11 @@ pub fn current_branch_name() -> Result<String, VersError> {
 /// Creates spinner
 fn spinner(message: &'static str) -> SpinnerHandle {
     SpinnerBuilder::new().spinner(&DOTS).text(message).start()
+}
+
+/// Returns a colored text next to a spinner
+fn spinner_text(sp: SpinnerHandle, message: &str) {
+    let msg = message.green().to_string();
+    sp.text(msg);
+    sp.done();
 }
