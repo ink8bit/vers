@@ -19,11 +19,11 @@ pub(crate) struct Entry<'a> {
 }
 
 impl Changelog<'_> {
-    pub(crate) fn update(&self) -> Result<String, Box<dyn Error>> {
+    pub(crate) fn update(&self) -> Result<(), Box<dyn Error>> {
         let formatted = self.format(&self.entry);
         let _res = self.write(formatted)?;
 
-        Ok(format!("{} updated", CHANGELOG_FILE_NAME))
+        Ok(())
     }
 
     fn format(&self, e: &Entry) -> String {

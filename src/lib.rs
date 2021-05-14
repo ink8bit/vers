@@ -101,9 +101,7 @@ pub fn update(version: &str, info: &str, no_commit: bool) -> Result<String, Vers
     };
 
     let log = Changelog { entry: e };
-
-    let update_msg = log.update().map_err(|_| VersError::LogUpdate)?;
-    println!("{}", update_msg);
+    log.update().map_err(|_| VersError::LogUpdate)?;
 
     if no_commit {
         return Ok(v);
