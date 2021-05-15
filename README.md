@@ -58,9 +58,9 @@ vers = { git = "https://github.com/ink8bit/vers", branch = "master" }
 
 ### Public API
 
-- [update](#update) - updates `CHANGELOG.md`, `package.json`, `package-lock.json` (if exists), commits changes, creates tag and pushes changes to the remote.
-- [save_changes](#save_changes) - creates commit and tag
-- [push_changes](#push_changes) - pushes changes to the remote
+- [update](#update) - updates `CHANGELOG.md`, `package.json`, `package-lock.json` (if exists), commits changes, creates tag and pushes changes to the remote. Returns created version value.
+- [save_changes](#save_changes) - creates commit and tag. Returns created tag value.
+- [push_changes](#push_changes) - pushes changes to the remote. Returns current git branch value.
 - [releaser](#releaser) - returns your git user name and user email, or your GitHub handle if you set env var [VERS_GITHUB_NAME](#using-github-username)
 - [current_branch_name](#current_branch_name) - returns current git branch value
 
@@ -76,16 +76,18 @@ match vers::update("minor", "changes", false) {
 #### `save_changes`
 
 ```rust
-if let Err(e) = vers::save_changes("v1.2.3", "releaser", "some info") {
-    panic!("{}", e);
+match vers::save_changes("v1.2.3", "releaser", "some info") {
+    Ok(v) => println!("Created tag: {}", v),
+    Err(e) => eprintln!("{}", e),
 }
 ```
 
 #### `push_changes`
 
 ```rust
-if let Err(e) = vers::push_changes() {
-    panic!("{}", e);
+match vers::push_changes() {
+    Ok(v) => println!("Current git branch: {}", v),
+    Err(e) => eprintln!("{}", e),
 }
 ```
 
