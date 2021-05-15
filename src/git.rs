@@ -5,18 +5,14 @@ use std::str;
 /// Commits your changes without running pre-commit hooks
 ///
 /// Uses `git commit -n --cleanup=strip -m <message>` command under the hood
-pub(crate) fn commit<'a>(
-    version: &str,
-    releaser: &str,
-    info: &str,
-) -> Result<&'a str, std::io::Error> {
+pub(crate) fn commit(version: &str, releaser: &str, info: &str) -> Result<(), std::io::Error> {
     let comment = create_comment(&version, &releaser, &info, false);
     let out = Command::new("git")
         .args(&["commit", "-n", "--cleanup=strip", "-m", &comment])
         .output();
 
     match out {
-        Ok(_) => Ok("Successfully committed changes"),
+        Ok(_) => Ok(()),
         Err(e) => Err(e),
     }
 }
@@ -76,10 +72,7 @@ pub(crate) fn push(branch: &str, remote_name: &str) -> Result<String, Box<dyn Er
         .args(&["push", "--follow-tags", remote_name, &branch])
         .output()?;
 
-    Ok(format!(
-        "Successfully pushed changes to remote branch '{}'",
-        branch
-    ))
+    Ok(branch.to_string())
 }
 
 /// Returns `git` remote value
@@ -135,7 +128,7 @@ pub(crate) fn tag(version: &str, releaser: &str, info: &str) -> Result<String, s
         .output();
 
     match tag_cmd {
-        Ok(_) => Ok(format!("Successfully created new tag {}", version)),
+        Ok(_) => Ok(version.to_string()),
         Err(e) => Err(e),
     }
 }
