@@ -9,8 +9,11 @@ use changelog::{Changelog, Entry};
 use std::{env, fmt, path::Path};
 
 const COMMIT_MSG: &str = "Committing...";
+const COMMIT_SUCCESS_MSG: &str = "Successfully committed your changes";
 const TAG_MSG: &str = "Tagging...";
+const TAG_SUCCESS_MSG: &str = "Successfully created tag";
 const PUSH_MSG: &str = "Pushing...";
+const PUSH_SUCCESS_MSG: &str = "Successfully pushed your changes to remote branch";
 
 #[derive(Debug)]
 pub enum VersError {
@@ -110,12 +113,12 @@ pub fn update(version: &str, info: &str, no_commit: bool) -> Result<String, Vers
     git::add_all().map_err(|_| VersError::GitAddAll)?;
 
     let sp = spinner(COMMIT_MSG);
-    let commit_msg = git::commit(&v, &r, info).map_err(|_| VersError::GitCommit)?;
-    spinner_text(sp, &commit_msg);
+    git::commit(&v, &r, info).map_err(|_| VersError::GitCommit)?;
+    spinner_text(sp, COMMIT_SUCCESS_MSG);
 
     let sp = spinner(TAG_MSG);
-    let tag_msg = git::tag(&v, &r, info).map_err(|_| VersError::GitTag)?;
-    spinner_text(sp, &tag_msg);
+    let tag = git::tag(&v, &r, info).map_err(|_| VersError::GitTag)?;
+    spinner_text(sp, &format!("{} {}", TAG_SUCCESS_MSG, tag));
 
     let sp = spinner(PUSH_MSG);
     let current_branch = git::branch().map_err(|_| VersError::GitBranch)?;
@@ -126,8 +129,8 @@ pub fn update(version: &str, info: &str, no_commit: bool) -> Result<String, Vers
     if remote_name.is_empty() {
         return Err(VersError::GitRemote);
     }
-    let push_msg = git::push(&current_branch, &remote_name).map_err(|_| VersError::GitPush)?;
-    spinner_text(sp, &push_msg);
+    let branch = git::push(&current_branch, &remote_name).map_err(|_| VersError::GitPush)?;
+    spinner_text(sp, &format!("{} {}", PUSH_SUCCESS_MSG, branch));
 
     Ok(v)
 }
@@ -143,13 +146,12 @@ pub fn save_changes(version: &str, releaser_name: &str, info: &str) -> Result<()
     git::add_all().map_err(|_| VersError::GitAddAll)?;
 
     let sp = spinner(COMMIT_MSG);
-    let commit_msg =
-        git::commit(&version, &releaser_name, &info).map_err(|_| VersError::GitCommit)?;
-    spinner_text(sp, &commit_msg);
+    git::commit(&version, &releaser_name, &info).map_err(|_| VersError::GitCommit)?;
+    spinner_text(sp, COMMIT_SUCCESS_MSG);
 
     let sp = spinner(TAG_MSG);
-    let tag_msg = git::tag(&version, &releaser_name, &info).map_err(|_| VersError::GitTag)?;
-    spinner_text(sp, &tag_msg);
+    let tag = git::tag(&version, &releaser_name, &info).map_err(|_| VersError::GitTag)?;
+    spinner_text(sp, &format!("{} {}", TAG_SUCCESS_MSG, tag));
 
     Ok(())
 }
@@ -167,8 +169,8 @@ pub fn push_changes() -> Result<(), VersError> {
         return Err(VersError::GitRemote);
     }
 
-    let msg = git::push(&current_branch, &remote_name).map_err(|_| VersError::GitPush)?;
-    spinner_text(sp, &msg);
+    let branch = git::push(&current_branch, &remote_name).map_err(|_| VersError::GitPush)?;
+    spinner_text(sp, &format!("{} {}", PUSH_SUCCESS_MSG, branch));
 
     Ok(())
 }
