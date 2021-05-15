@@ -6,8 +6,8 @@
 
 In general, `vers` does the following:
 
-- `package.json`
-- `package-lock.json` (if exists)
+- updates `package.json`
+- updates `package-lock.json` (if exists)
 - creates *CHANGELOG.md* file
 - creates commit using formatting: `Version bump: v0.1.0`
 - creates an annotated git tag
