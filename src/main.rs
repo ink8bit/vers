@@ -11,7 +11,7 @@ fn main() {
 
     let sp = SpinnerBuilder::new()
         .spinner(&DOTS)
-        .text("Updating...")
+        .text(" Updating...")
         .start();
 
     match vers::update(version, info, no_commit) {
@@ -25,7 +25,7 @@ fn main() {
         Err(e) => {
             let err_msg = format!("Error: {}", e).red().to_string();
             sp.text(err_msg);
-            sp.done();
+            sp.error();
         }
     }
 }
