@@ -20,12 +20,12 @@ pub enum VersError {
     PackageNotFound,
 }
 
+fn colored(message: &str) -> ColoredString {
+    message.red()
+}
+
 impl fmt::Display for VersError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        fn colored(message: &str) -> ColoredString {
-            message.red()
-        }
-
         match self {
             VersError::GitName => write!(f, "{}", colored("Could not get git user name")),
             VersError::GitEmail => write!(f, "{}",  colored("Could not get git user email")),
