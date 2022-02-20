@@ -3,11 +3,13 @@ use terminal_spinners::{SpinnerBuilder, DOTS};
 
 mod cli;
 
+use cli::{commit::COMMIT_ARG, info::INFO_ARG, version::VERSION_ARG};
+
 fn main() {
     let args = cli::args();
-    let info = args.value_of("info").unwrap_or_default();
-    let version = args.value_of("version_type").unwrap();
-    let no_commit = args.is_present("no_commit");
+    let info = args.value_of(INFO_ARG).unwrap_or_default();
+    let version = args.value_of(VERSION_ARG).unwrap();
+    let no_commit = args.is_present(COMMIT_ARG);
 
     let sp = SpinnerBuilder::new()
         .spinner(&DOTS)
