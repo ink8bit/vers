@@ -15,6 +15,8 @@ In general, `vers` does the following:
 
 `vers` works only with _git_.
 
+> `vers` doesn't work in `main` branch by design, works only in feature branches.
+
 ## How to use
 
 You can use it as a binary or as a library.
