@@ -2,6 +2,7 @@ use clap::Arg;
 
 pub(crate) const INFO_ARG: &str = "info";
 
+/// Adds content to `Changes` section in every changelog entry.
 pub(crate) fn info() -> Arg<'static> {
     Arg::new(INFO_ARG)
         .short('i')
