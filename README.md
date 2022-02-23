@@ -8,7 +8,7 @@ In general, `vers` does the following:
 
 - updates `package.json`
 - updates `package-lock.json` (if exists)
-- creates *CHANGELOG.md* file
+- creates _CHANGELOG.md_ file
 - creates commit using formatting: `Version bump: v0.1.0`
 - creates an annotated git tag
 - and pushes changes
@@ -49,7 +49,7 @@ OPTIONS:
 
 > The crate is only available via git repo for now. You can include it using `rev`, `tag` or `branch` key. Read more in [Cargo docs](https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html#specifying-dependencies-from-git-repositories).
 
-You should add `vers` crate to your *Cargo.toml* file:
+You should add `vers` crate to your _Cargo.toml_ file:
 
 ```console
 [dependencies]
@@ -58,13 +58,9 @@ vers = { git = "https://github.com/ink8bit/vers", branch = "master" }
 
 ### Public API
 
-- [update](#update) - updates `CHANGELOG.md`, `package.json`, `package-lock.json` (if exists), commits changes, creates tag and pushes changes to the remote. Returns created version value.
-- [save_changes](#save_changes) - creates commit and tag. Returns created tag value.
-- [push_changes](#push_changes) - pushes changes to the remote. Returns current git branch value.
-- [releaser](#releaser) - returns your git user name and user email, or your GitHub handle if you set env var [VERS_GITHUB_NAME](#using-github-username)
-- [current_branch_name](#current_branch_name) - returns current git branch value
-
 #### `update`
+
+Updates `CHANGELOG.md`, `package.json`, `package-lock.json` (if exists), commits changes, creates tag and pushes changes to the remote. Returns created version value.
 
 ```rust
 match vers::update("minor", "changes", false) {
@@ -75,6 +71,8 @@ match vers::update("minor", "changes", false) {
 
 #### `save_changes`
 
+Creates commit and tag. Returns created tag value.
+
 ```rust
 match vers::save_changes("v1.2.3", "releaser", "some info") {
     Ok(v) => println!("Created tag: {}", v),
@@ -83,6 +81,8 @@ match vers::save_changes("v1.2.3", "releaser", "some info") {
 ```
 
 #### `push_changes`
+
+Pushes changes to the remote. Returns current git branch value.
 
 ```rust
 match vers::push_changes() {
@@ -93,6 +93,8 @@ match vers::push_changes() {
 
 #### `releaser`
 
+Returns your git user name and user email, or your GitHub handle if you set env var [VERS_GITHUB_NAME](#using-github-username).
+
 ```rust
 let releaser = match vers::releaser() {
     Ok(value) => value,
@@ -101,6 +103,8 @@ let releaser = match vers::releaser() {
 ```
 
 #### `current_branch_name`
+
+Returns current `git branch` value.
 
 ```rust
 let branch = match vers::current_branch_name() {
@@ -139,4 +143,4 @@ You need to set env variable `VERS_GITHUB_NAME`. For example:
 export VERS_GITHUB_NAME=username
 ```
 
-> If `vers` could not get value from env var `VERS_GITHUB_NAME`, your *git* user name and email will be used instead.
+> If `vers` could not get value from env var `VERS_GITHUB_NAME`, your _git_ user name and email will be used instead.
