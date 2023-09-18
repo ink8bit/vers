@@ -8,7 +8,7 @@ publish = false
 description = "CLI utility to change package version in JavaScript projects"
 
 [dependencies]
-clap = { version = "3.2.22", features = ["cargo"] }
+clap = { version = "4.4.3", features = ["cargo"] }
 chrono = "0.4.31"
 terminal-spinners = "0.3.2"
 colored = "2.0.4"
