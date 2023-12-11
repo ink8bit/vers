@@ -11,7 +11,7 @@ description = "CLI utility to change package version in JavaScript projects"
 clap = { version = "3.2.22", features = ["cargo"] }
 chrono = "0.4.31"
 terminal-spinners = "0.3.2"
-colored = "2.0.4"
+colored = "2.1.0"
 
 [lib]
 name = "vers"
