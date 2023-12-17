@@ -6,10 +6,11 @@ mod cli;
 use cli::{commit::COMMIT_ARG, info::INFO_ARG, version::VERSION_ARG};
 
 fn main() {
-    let args = cli::args();
-    let info = args.value_of(INFO_ARG).unwrap_or_default();
-    let version = args.value_of(VERSION_ARG).unwrap();
-    let no_commit = args.is_present(COMMIT_ARG);
+    let matches = cli::args();
+    let version = matches.get_one::<String>(VERSION_ARG).unwrap();
+    let no_commit = matches.get_flag(COMMIT_ARG);
+    let default_info = "".to_string();
+    let info = matches.get_one::<String>(INFO_ARG).unwrap_or(&default_info);
 
     let sp = SpinnerBuilder::new()
         .spinner(&DOTS)
