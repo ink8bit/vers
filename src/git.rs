@@ -6,9 +6,9 @@ use std::str;
 ///
 /// Uses `git commit -n --cleanup=strip -m <message>` command under the hood
 pub(crate) fn commit(version: &str, releaser: &str, info: &str) -> Result<(), std::io::Error> {
-    let comment = create_comment(&version, &releaser, &info, false);
+    let comment = create_comment(version, releaser, info, false);
     let out = Command::new("git")
-        .args(&["commit", "-n", "--cleanup=strip", "-m", &comment])
+        .args(["commit", "-n", "--cleanup=strip", "-m", &comment])
         .output();
 
     match out {
@@ -21,7 +21,7 @@ pub(crate) fn commit(version: &str, releaser: &str, info: &str) -> Result<(), st
 ///
 /// Uses `git add --all` command under the hood
 pub(crate) fn add_all() -> Result<(), Box<dyn Error>> {
-    Command::new("git").args(&["add", "--all"]).output()?;
+    Command::new("git").args(["add", "--all"]).output()?;
     Ok(())
 }
 
@@ -40,7 +40,7 @@ pub(crate) fn branch() -> Result<String, Box<dyn Error>> {
 /// Uses `git branch --show-current` command under the hood
 fn branch_name() -> Result<String, Box<dyn Error>> {
     let out = Command::new("git")
-        .args(&["branch", "--show-current"])
+        .args(["branch", "--show-current"])
         .output()?;
     let stdout = str::from_utf8(&out.stdout)?.trim();
 
@@ -54,7 +54,7 @@ fn branch_name() -> Result<String, Box<dyn Error>> {
 /// Uses `git rev-parse --abbrev-ref HEAD` command under the hood
 fn branch_name_fallback() -> Result<String, Box<dyn Error>> {
     let out = Command::new("git")
-        .args(&["rev-parse", "--abbrev-ref", "HEAD"])
+        .args(["rev-parse", "--abbrev-ref", "HEAD"])
         .output()?;
     let stdout = str::from_utf8(&out.stdout)?.trim();
 
@@ -69,7 +69,7 @@ fn branch_name_fallback() -> Result<String, Box<dyn Error>> {
 /// - `remote_name` - `git` remote value
 pub(crate) fn push(branch: &str, remote_name: &str) -> Result<String, Box<dyn Error>> {
     let _out = Command::new("git")
-        .args(&["push", "--follow-tags", remote_name, &branch])
+        .args(["push", "--follow-tags", remote_name, &branch])
         .output()?;
 
     Ok(branch.to_string())
@@ -122,9 +122,9 @@ fn create_comment(version: &str, releaser: &str, info: &str, is_tag: bool) -> St
 ///
 /// Uses `git tag -a <version> -m <message>` command under the hood
 pub(crate) fn tag(version: &str, releaser: &str, info: &str) -> Result<String, std::io::Error> {
-    let comment = create_comment(&version, &releaser, &info, true);
+    let comment = create_comment(version, releaser, info, true);
     let tag_cmd = Command::new("git")
-        .args(&["tag", "-a", version, "-m", &comment])
+        .args(["tag", "-a", version, "-m", &comment])
         .output();
 
     match tag_cmd {
@@ -137,9 +137,7 @@ pub(crate) fn tag(version: &str, releaser: &str, info: &str) -> Result<String, s
 ///
 /// Uses `git config user.name` command under the hood
 pub(crate) fn user_name() -> Result<String, Box<dyn Error>> {
-    let out = Command::new("git")
-        .args(&["config", "user.name"])
-        .output()?;
+    let out = Command::new("git").args(["config", "user.name"]).output()?;
 
     let stdout = str::from_utf8(&out.stdout)?.trim();
     Ok(stdout.to_string())
@@ -150,7 +148,7 @@ pub(crate) fn user_name() -> Result<String, Box<dyn Error>> {
 /// Uses `git config user.email` command under the hood
 pub(crate) fn user_email() -> Result<String, Box<dyn Error>> {
     let out = Command::new("git")
-        .args(&["config", "user.email"])
+        .args(["config", "user.email"])
         .output()?;
 
     let stdout = str::from_utf8(&out.stdout)?.trim();
@@ -161,7 +159,7 @@ pub(crate) fn user_email() -> Result<String, Box<dyn Error>> {
 ///
 /// Uses `git status -s` command under the hood
 fn status() -> Result<String, Box<dyn Error>> {
-    let out = Command::new("git").args(&["status", "-s"]).output()?;
+    let out = Command::new("git").args(["status", "-s"]).output()?;
     let stdout = str::from_utf8(&out.stdout)?.trim();
     Ok(stdout.to_string())
 }
@@ -182,7 +180,7 @@ pub(crate) fn has_changes() -> Result<bool, Box<dyn Error>> {
 
 pub(crate) fn log() -> Result<String, Box<dyn Error>> {
     let out = Command::new("git")
-        .args(&[
+        .args([
             "log",
             "--pretty=format:%h | %an | %s",
             "--no-merges",

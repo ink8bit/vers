@@ -21,7 +21,7 @@ pub(crate) struct Entry<'a> {
 impl Changelog<'_> {
     pub(crate) fn update(&self) -> Result<(), Box<dyn Error>> {
         let formatted = self.format(&self.entry);
-        let _res = self.write(formatted)?;
+        self.write(formatted)?;
 
         Ok(())
     }

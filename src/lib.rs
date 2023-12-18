@@ -89,8 +89,8 @@ pub fn update(version: &str, info: &str, no_commit: bool) -> Result<String, Vers
 /// - `info` - additional info you want to provide
 pub fn save_changes(version: &str, releaser_name: &str, info: &str) -> Result<String, VersError> {
     git::add_all().map_err(|_| VersError::GitAddAll)?;
-    git::commit(&version, &releaser_name, &info).map_err(|_| VersError::GitCommit)?;
-    let tag = git::tag(&version, &releaser_name, &info).map_err(|_| VersError::GitTag)?;
+    git::commit(version, releaser_name, info).map_err(|_| VersError::GitCommit)?;
+    let tag = git::tag(version, releaser_name, info).map_err(|_| VersError::GitTag)?;
 
     Ok(tag)
 }
