@@ -7,7 +7,7 @@ use std::str;
 /// Uses `npm version` command under the hood
 pub(crate) fn version(ver_type: &str) -> Result<String, Box<dyn Error>> {
     let out = Command::new("npm")
-        .args(&[
+        .args([
             "version",
             ver_type,
             "--no-git-tag-version",
