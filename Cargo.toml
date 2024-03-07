@@ -9,7 +9,7 @@ description = "CLI utility to change package version in JavaScript projects"
 
 [dependencies]
 clap = { version = "4.5.1", features = ["cargo", "deprecated"] }
-chrono = "0.4.34"
+chrono = "0.4.35"
 terminal-spinners = "0.3.2"
 colored = "2.1.0"
 
